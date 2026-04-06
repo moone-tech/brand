@@ -14,6 +14,28 @@ function optionalEnv(key: string, fallback: string): string {
   return process.env[key] ?? fallback;
 }
 
+// Parse DATABASE_URL (Railway Postgres) or fall back to individual DB_* vars
+function getDbConfig() {
+  const url = process.env['DATABASE_URL'];
+  if (url) {
+    const u = new URL(url);
+    return {
+      host: u.hostname,
+      port: parseInt(u.port || '5432', 10),
+      name: u.pathname.slice(1),
+      user: u.username,
+      password: u.password,
+    };
+  }
+  return {
+    host: optionalEnv('DB_HOST', 'localhost'),
+    port: parseInt(optionalEnv('DB_PORT', '5432'), 10),
+    name: optionalEnv('DB_NAME', 'moone_brand'),
+    user: optionalEnv('DB_USER', 'postgres'),
+    password: optionalEnv('DB_PASSWORD', ''),
+  };
+}
+
 export const config = {
   server: {
     port: parseInt(optionalEnv('PORT', '3001'), 10),
@@ -21,13 +43,7 @@ export const config = {
     nodeEnv: optionalEnv('NODE_ENV', 'development'),
     appUrl: optionalEnv('APP_URL', 'http://localhost:5173'),
   },
-  db: {
-    host: optionalEnv('DB_HOST', 'localhost'),
-    port: parseInt(optionalEnv('DB_PORT', '5432'), 10),
-    name: optionalEnv('DB_NAME', 'moone_brand'),
-    user: optionalEnv('DB_USER', 'postgres'),
-    password: optionalEnv('DB_PASSWORD', ''),
-  },
+  db: getDbConfig(),
   auth: {
     jwtSecret: requireEnv('JWT_SECRET'),
     jwtRefreshSecret: requireEnv('JWT_REFRESH_SECRET'),
