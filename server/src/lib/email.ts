@@ -2,7 +2,7 @@
 // server/src/lib/email.ts — Brevo email service
 // =============================================================================
 
-import * as Brevo from '@sib-swiss/brevo-node';
+import * as Brevo from '@getbrevo/brevo';
 import { config } from '../config';
 import { logger } from './logger';
 
