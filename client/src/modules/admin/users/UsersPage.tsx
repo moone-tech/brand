@@ -6,19 +6,22 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Mail, Trash2, ChevronDown } from 'lucide-react';
 import { api } from '../../../lib/api';
+import { useTranslation } from '../../../lib/i18n';
 import type { UserProfile, UserRole, InviteUserInput } from '@shared/types';
 import { useAuth } from '../../../hooks/useAuth';
 
 const ROLES: UserRole[] = ['viewer', 'editor', 'admin'];
-const ROLE_LABELS: Record<UserRole, string> = {
-  viewer: 'Viewer — jen čte',
-  editor: 'Editor — edituje CI, board, mood',
-  admin: 'Admin — plný přístup',
-};
 
 export function UsersPage() {
   const qc = useQueryClient();
   const { user: me } = useAuth();
+  const { t } = useTranslation();
+
+  const ROLE_LABELS: Record<UserRole, string> = {
+    viewer: t('users_role_viewer'),
+    editor: t('users_role_editor'),
+    admin: t('users_role_admin'),
+  };
 
   const [inviteForm, setInviteForm] = useState<InviteUserInput>({ email: '', name: '', role: 'editor' });
   const [inviteSuccess, setInviteSuccess] = useState('');
@@ -35,13 +38,13 @@ export function UsersPage() {
     mutationFn: (input: InviteUserInput) => api.post('/auth/users/invite', input),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['users'] });
-      setInviteSuccess(`Pozvánka odeslána na ${inviteForm.email}`);
+      setInviteSuccess(`${t('users_invite_sent')} ${inviteForm.email}`);
       setInviteForm({ email: '', name: '', role: 'editor' });
       setTimeout(() => setInviteSuccess(''), 4000);
     },
     onError: (err: unknown) => {
       const msg = (err as { response?: { data?: { error?: { message?: string } } } })?.response?.data?.error?.message;
-      setInviteError(msg ?? 'Nastala chyba');
+      setInviteError(msg ?? t('users_error'));
       setTimeout(() => setInviteError(''), 4000);
     },
   });
@@ -59,8 +62,8 @@ export function UsersPage() {
   return (
     <div className="p-8 animate-fade-in max-w-3xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight mb-1" style={{ color: 'var(--text)' }}>Uživatelé</h1>
-        <p className="text-sm" style={{ color: 'var(--muted)' }}>Správa přístupu do Brand workspace</p>
+        <h1 className="text-2xl font-bold tracking-tight mb-1" style={{ color: 'var(--text)' }}>{t('users_title')}</h1>
+        <p className="text-sm" style={{ color: 'var(--muted)' }}>{t('users_subtitle')}</p>
       </div>
 
       {/* Invite form */}
@@ -68,20 +71,20 @@ export function UsersPage() {
         className="p-6 rounded-2xl border mb-8"
         style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
       >
-        <p className="font-semibold mb-4" style={{ color: 'var(--text)' }}>Pozvat uživatele</p>
+        <p className="font-semibold mb-4" style={{ color: 'var(--text)' }}>{t('users_invite_section')}</p>
         <div className="grid sm:grid-cols-3 gap-3 mb-3">
           <input
             type="email"
             value={inviteForm.email}
             onChange={e => setInviteForm(f => ({ ...f, email: e.target.value }))}
-            placeholder="email@mo.one"
+            placeholder={t('users_email_placeholder')}
             className="px-3 py-2.5 rounded-xl text-sm border focus:outline-none"
             style={{ background: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text)' }}
           />
           <input
             value={inviteForm.name}
             onChange={e => setInviteForm(f => ({ ...f, name: e.target.value }))}
-            placeholder="Jméno"
+            placeholder={t('users_name_placeholder')}
             className="px-3 py-2.5 rounded-xl text-sm border focus:outline-none"
             style={{ background: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text)' }}
           />
@@ -109,14 +112,14 @@ export function UsersPage() {
             style={{ background: 'var(--primary)', color: 'var(--primary-fg)' }}
           >
             <Mail size={14} />
-            {invite.isPending ? 'Odesílám…' : 'Odeslat pozvánku'}
+            {invite.isPending ? t('users_sending') : t('users_send_invite')}
           </button>
           {inviteSuccess && <p className="text-sm" style={{ color: 'var(--reward)' }}>{inviteSuccess}</p>}
           {inviteError && <p className="text-sm" style={{ color: 'var(--destructive)' }}>{inviteError}</p>}
         </div>
 
         <p className="text-xs mt-3" style={{ color: 'var(--muted)' }}>
-          {ROLE_LABELS[inviteForm.role]}. Pozvánka vyprší za 72 hodin.
+          {ROLE_LABELS[inviteForm.role]}. {t('users_expires')}
         </p>
       </div>
 
@@ -137,12 +140,13 @@ export function UsersPage() {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium" style={{ color: 'var(--text)' }}>
                 {u.name}
-                {u.id === me?.id && <span className="ml-2 text-xs" style={{ color: 'var(--muted)' }}>(ty)</span>}
+                {u.id === me?.id && (
+                  <span className="ml-2 text-xs" style={{ color: 'var(--muted)' }}>{t('users_you')}</span>
+                )}
               </p>
               <p className="text-xs truncate" style={{ color: 'var(--muted)' }}>{u.email}</p>
             </div>
 
-            {/* Role selector */}
             <div className="relative">
               <select
                 value={u.role}
@@ -159,7 +163,7 @@ export function UsersPage() {
             {u.id !== me?.id && (
               <button
                 onClick={() => {
-                  if (confirm(`Odstranit ${u.name}?`)) deleteUser.mutate(u.id);
+                  if (confirm(`${t('users_remove_confirm')} ${u.name}?`)) deleteUser.mutate(u.id);
                 }}
                 className="opacity-30 hover:opacity-100 transition-opacity"
               >

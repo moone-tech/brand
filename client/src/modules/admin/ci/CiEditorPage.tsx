@@ -13,41 +13,13 @@ import {
   type CiValue, type VoiceExample,
 } from './data'
 import { useCiStore } from './useCiStore'
+import { useTranslation } from '@/lib/i18n'
 
 type Section =
   | 'mission' | 'values' | 'positioning' | 'voice' | 'microcopy'
   | 'logo' | 'colors' | 'typography' | 'iconography'
   | 'spacing' | 'motion' | 'components' | 'imagery'
   | 'superapp' | 'entities' | 'applications'
-
-const SIDEBAR: { label: string; items: { id: Section; name: string }[] }[] = [
-  { label: 'Brand Core', items: [
-    { id: 'mission',     name: 'Mise & vize' },
-    { id: 'values',      name: 'Hodnoty' },
-    { id: 'positioning', name: 'Positioning' },
-    { id: 'voice',       name: 'Hlas & tón' },
-    { id: 'microcopy',   name: 'Microcopy' },
-  ]},
-  { label: 'Vizuální identita', items: [
-    { id: 'logo',        name: 'Logo systém' },
-    { id: 'colors',      name: 'Barevná paleta' },
-    { id: 'typography',  name: 'Typografie' },
-    { id: 'iconography', name: 'Ikonografie' },
-  ]},
-  { label: 'Design systém', items: [
-    { id: 'spacing',    name: 'Spacing & layout' },
-    { id: 'motion',     name: 'Motion principy' },
-    { id: 'components', name: 'Komponenty' },
-    { id: 'imagery',    name: 'Fotografie' },
-  ]},
-  { label: 'Mo.one App', items: [
-    { id: 'superapp',   name: 'SuperApp UI' },
-  ]},
-  { label: 'Holding', items: [
-    { id: 'entities',     name: 'Entity & sub-brands' },
-    { id: 'applications', name: 'Aplikace identity' },
-  ]},
-]
 
 function copyHex(hex: string) {
   navigator.clipboard.writeText(hex).catch(() => undefined)
@@ -2254,6 +2226,36 @@ export function CiEditorPage() {
   const [active, setActive] = useState<Section>('mission')
   const [editMode, setEditMode] = useState(false)
   const { data, save, reset } = useCiStore()
+  const { t } = useTranslation()
+
+  const SIDEBAR: { label: string; items: { id: Section; name: string }[] }[] = [
+    { label: t('ci_section_brand_core'), items: [
+      { id: 'mission',     name: t('ci_nav_mission') },
+      { id: 'values',      name: t('ci_nav_values') },
+      { id: 'positioning', name: t('ci_nav_positioning') },
+      { id: 'voice',       name: t('ci_nav_voice') },
+      { id: 'microcopy',   name: t('ci_nav_microcopy') },
+    ]},
+    { label: t('ci_section_visual'), items: [
+      { id: 'logo',        name: t('ci_nav_logo') },
+      { id: 'colors',      name: t('ci_nav_colors') },
+      { id: 'typography',  name: t('ci_nav_typography') },
+      { id: 'iconography', name: t('ci_nav_iconography') },
+    ]},
+    { label: t('ci_section_design'), items: [
+      { id: 'spacing',    name: t('ci_nav_spacing') },
+      { id: 'motion',     name: t('ci_nav_motion') },
+      { id: 'components', name: t('ci_nav_components') },
+      { id: 'imagery',    name: t('ci_nav_photography') },
+    ]},
+    { label: t('ci_section_app'), items: [
+      { id: 'superapp',   name: t('ci_nav_superapp') },
+    ]},
+    { label: t('ci_section_holding'), items: [
+      { id: 'entities',     name: t('ci_nav_entities') },
+      { id: 'applications', name: t('ci_nav_applications') },
+    ]},
+  ]
 
   const sectionProps: SectionProps = { editMode, data, save }
 
@@ -2348,14 +2350,14 @@ export function CiEditorPage() {
                 : 'border border-border text-muted-foreground hover:text-foreground hover:bg-muted',
             )}
           >
-            {editMode ? <><Check className="h-3.5 w-3.5" /> Hotovo</> : <><Pencil className="h-3.5 w-3.5" /> Editovat texty</>}
+            {editMode ? <><Check className="h-3.5 w-3.5" /> {t('ci_saved')}</> : <><Pencil className="h-3.5 w-3.5" /> {t('ci_save')}</>}
           </button>
           {editMode && (
             <button
-              onClick={() => { if (confirm('Resetovat všechny texty na výchozí hodnoty?')) { reset(); setEditMode(false) } }}
+              onClick={() => { if (confirm(t('cancel'))) { reset(); setEditMode(false) } }}
               className="w-full flex items-center justify-center gap-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-destructive transition-colors"
             >
-              <RotateCcw className="h-3 w-3" /> Resetovat výchozí
+              <RotateCcw className="h-3 w-3" /> {t('reset_request_new')}
             </button>
           )}
         </div>
@@ -2366,7 +2368,7 @@ export function CiEditorPage() {
         {editMode && editableSections.has(active) && (
           <div className="mb-4 flex items-center gap-2 px-4 py-2.5 rounded border border-border bg-card text-xs text-muted-foreground">
             <Pencil className="h-3.5 w-3.5 flex-shrink-0" />
-            Editační mód — klikni na text a uprav ho. Změny se ukládají automaticky do localStorage.
+            {t('ci_subtitle')}
           </div>
         )}
         {SECTION_MAP[active]}

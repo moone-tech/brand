@@ -3,43 +3,45 @@
 // =============================================================================
 
 import { Download } from 'lucide-react';
-
-const ASSET_GROUPS = [
-  {
-    label: 'Loga',
-    items: [
-      { name: 'Mo.one logo — bílé (SVG)', file: '/assets/logo/moone-white.svg' },
-      { name: 'Mo.one logo — černé (SVG)', file: '/assets/logo/moone-black.svg' },
-      { name: 'Mo.one ikona (SVG)', file: '/assets/logo/moone-icon.svg' },
-      { name: 'Legi.one logo (SVG)', file: '/assets/logo/legione-logo.svg' },
-    ],
-  },
-  {
-    label: 'Barvy',
-    items: [
-      { name: 'Paleta barev (ASE)', file: '/assets/colors/moone-palette.ase' },
-      { name: 'Paleta barev (CSS vars)', file: '/assets/colors/moone-palette.css' },
-    ],
-  },
-  {
-    label: 'Typografie',
-    items: [
-      { name: 'Figtree — Google Fonts', file: 'https://fonts.google.com/specimen/Figtree' },
-    ],
-  },
-];
+import { useTranslation } from '../../lib/i18n';
 
 export function AssetsPage() {
+  const { t } = useTranslation();
+
+  const ASSET_GROUPS = [
+    {
+      label: t('assets_group_logos'),
+      items: [
+        { name: t('assets_logo_white'), file: '/assets/logo/moone-white.svg' },
+        { name: t('assets_logo_black'), file: '/assets/logo/moone-black.svg' },
+        { name: t('assets_logo_icon'),  file: '/assets/logo/moone-icon.svg' },
+        { name: t('assets_logo_legi'),  file: '/assets/logo/legione-logo.svg' },
+      ],
+    },
+    {
+      label: t('assets_group_colors'),
+      items: [
+        { name: t('assets_colors_ase'), file: '/assets/colors/moone-palette.ase' },
+        { name: t('assets_colors_css'), file: '/assets/colors/moone-palette.css' },
+      ],
+    },
+    {
+      label: t('assets_group_typography'),
+      items: [
+        { name: t('assets_font_figtree'), file: 'https://fonts.google.com/specimen/Figtree' },
+      ],
+    },
+  ];
+
   return (
     <div className="animate-fade-in space-y-12">
       <div>
-        <p className="label-caps mb-3" style={{ color: 'var(--primary)' }}>BRAND ASSETS</p>
+        <p className="label-caps mb-3" style={{ color: 'var(--primary)' }}>{t('assets_eyebrow')}</p>
         <h1 className="text-3xl font-bold tracking-tight mb-3" style={{ color: 'var(--text)' }}>
-          Vizuální assety ke stažení
+          {t('assets_heading')}
         </h1>
         <p className="text-base max-w-xl" style={{ color: 'var(--muted)' }}>
-          Oficální brand assety Mo.one pro zaměstnance, partnery a média.
-          Používejte výhradně soubory z tohoto portálu.
+          {t('assets_desc')}
         </p>
       </div>
 
@@ -71,8 +73,8 @@ export function AssetsPage() {
         className="p-6 rounded-2xl border text-sm"
         style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--muted)' }}
       >
-        <strong style={{ color: 'var(--text)' }}>Potřebuješ specifické assety?</strong>
-        {' '}Kontaktuj brand tým přes{' '}
+        <strong style={{ color: 'var(--text)' }}>{t('assets_custom_label')}</strong>
+        {' '}{t('assets_custom_contact')}{' '}
         <a href="mailto:brand@mo.one" style={{ color: 'var(--primary)' }} className="hover:underline">brand@mo.one</a>
       </div>
     </div>

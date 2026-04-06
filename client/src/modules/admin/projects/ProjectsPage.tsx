@@ -10,6 +10,7 @@ import type { Project, Task, TaskStatus, ColumnConfig } from '@shared/types';
 import type { UserProfile } from '@shared/types';
 import { useAuth } from '../../../hooks/useAuth';
 import { useTranslation } from '../../../lib/i18n';
+import { TaskDetailPanel } from './TaskDetailPanel';
 
 const DEFAULT_COLUMNS: ColumnConfig[] = [
   { status: 'todo', label: 'To Do' },
@@ -124,7 +125,7 @@ function UserPicker({
         <UserCircle size={12} style={{ color: 'var(--muted)' }} />
         <span className="max-w-24 truncate">
           {multi
-            ? (selectedCount > 0 ? `${selectedCount} členů` : placeholder)
+            ? (selectedCount > 0 ? `${selectedCount}` : placeholder)
             : (selectedUser ? selectedUser.name : placeholder)
           }
         </span>
@@ -185,6 +186,7 @@ export function ProjectsPage() {
   const canEdit = user?.role !== 'viewer';
 
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [newProjectName, setNewProjectName] = useState('');
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [addingTaskIn, setAddingTaskIn] = useState<TaskStatus | null>(null);
@@ -376,9 +378,10 @@ export function ProjectsPage() {
           className="mb-4 p-4 rounded-2xl border"
           style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
         >
+          <p className="text-xs font-medium mb-3" style={{ color: 'var(--text)' }}>{t('projects_settings')}</p>
           <button
             onClick={() => {
-              if (window.confirm('Opravdu smazat projekt?')) deleteProjectMut.mutate(activeProject.id);
+              if (window.confirm(t('projects_delete_confirm'))) deleteProjectMut.mutate(activeProject.id);
             }}
             className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm"
             style={{ color: 'var(--destructive)', background: 'color-mix(in srgb, var(--destructive) 8%, transparent)' }}
@@ -433,7 +436,8 @@ export function ProjectsPage() {
                     return (
                       <div
                         key={task.id}
-                        className="p-3 rounded-xl border group"
+                        onClick={() => setSelectedTask(task)}
+                        className="p-3 rounded-xl border group cursor-pointer transition-colors hover:border-[var(--primary)]"
                         style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
                       >
                         <div className="flex items-start justify-between gap-2">
@@ -442,7 +446,7 @@ export function ProjectsPage() {
                           </p>
                           {canEdit && (
                             <button
-                              onClick={() => deleteTask.mutate(task.id)}
+                              onClick={e => { e.stopPropagation(); deleteTask.mutate(task.id); }}
                               className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                             >
                               <Trash2 size={12} style={{ color: 'var(--destructive)' }} />
@@ -452,16 +456,18 @@ export function ProjectsPage() {
 
                         <div className="flex items-center justify-between mt-2 gap-1.5 flex-wrap">
                           <span className="text-xs" style={{ color: PRIORITY_COLORS[task.priority] }}>
-                            {task.priority}
+                            {t(`task_priority_${task.priority}` as 'task_priority_low')}
                           </span>
 
                           {canEdit && allUsers.length > 0 ? (
-                            <UserPicker
-                              users={allUsers}
-                              selectedId={task.assigneeId}
-                              onSelect={id => updateTask.mutate({ id: task.id, assigneeId: id })}
-                              placeholder={t('projects_no_assignee')}
-                            />
+                            <div onClick={e => e.stopPropagation()}>
+                              <UserPicker
+                                users={allUsers}
+                                selectedId={task.assigneeId}
+                                onSelect={id => updateTask.mutate({ id: task.id, assigneeId: id })}
+                                placeholder={t('projects_no_assignee')}
+                              />
+                            </div>
                           ) : assignee ? (
                             <span className="text-xs" style={{ color: 'var(--muted)' }}>{assignee.name}</span>
                           ) : null}
@@ -469,7 +475,8 @@ export function ProjectsPage() {
 
                         {canEdit && col.status !== 'done' && (
                           <button
-                            onClick={() => {
+                            onClick={e => {
+                              e.stopPropagation();
                               const statuses = columns.map(c => c.status);
                               const idx = statuses.indexOf(task.status);
                               if (idx < statuses.length - 1) moveTask.mutate({ id: task.id, status: statuses[idx + 1] });
@@ -498,7 +505,7 @@ export function ProjectsPage() {
                           autoFocus
                           value={newTaskTitle}
                           onChange={e => setNewTaskTitle(e.target.value)}
-                          placeholder={t('projects_task_title')}
+                          placeholder={t('projects_task_title_placeholder')}
                           className="w-full px-3 py-2 rounded-xl text-sm border focus:outline-none"
                           style={{ background: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text)' }}
                         />
@@ -536,6 +543,21 @@ export function ProjectsPage() {
             );
           })}
         </div>
+      )}
+
+      {/* Task detail slide-in panel */}
+      {selectedTask && activeProjectId && (
+        <TaskDetailPanel
+          task={selectedTask}
+          projectId={activeProjectId}
+          columns={columns}
+          users={allUsers}
+          canEdit={canEdit}
+          onClose={() => {
+            setSelectedTask(null);
+            qc.invalidateQueries({ queryKey: ['tasks', activeProjectId] });
+          }}
+        />
       )}
     </div>
   );

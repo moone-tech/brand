@@ -5,8 +5,10 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { api } from '../../lib/api';
+import { useTranslation } from '../../lib/i18n';
 
 export function ResetPasswordPage() {
+  const { t } = useTranslation();
   const [params] = useSearchParams();
   const token = params.get('token') ?? '';
   const navigate = useNavigate();
@@ -24,7 +26,7 @@ export function ResetPasswordPage() {
       navigate('/auth/login?reset=1');
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { error?: { message?: string } } } })?.response?.data?.error?.message;
-      setError(msg ?? 'Nastala chyba, zkus to znovu.');
+      setError(msg ?? t('reset_error'));
     } finally {
       setLoading(false);
     }
@@ -34,9 +36,9 @@ export function ResetPasswordPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--background)' }}>
         <div className="text-center">
-          <p style={{ color: 'var(--muted)' }}>Neplatný nebo vypršelý odkaz.</p>
+          <p style={{ color: 'var(--muted)' }}>{t('reset_invalid_link')}</p>
           <Link to="/auth/forgot-password" className="text-sm hover:underline mt-2 block" style={{ color: 'var(--primary)' }}>
-            Požádat o nový odkaz
+            {t('reset_request_new')}
           </Link>
         </div>
       </div>
@@ -48,12 +50,12 @@ export function ResetPasswordPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
           <div className="text-2xl font-bold tracking-tight mb-1" style={{ color: 'var(--text)' }}>Mo.one</div>
-          <div className="text-sm" style={{ color: 'var(--muted)' }}>Nové heslo</div>
+          <div className="text-sm" style={{ color: 'var(--muted)' }}>{t('reset_subtitle')}</div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="label-caps block mb-2">Nové heslo</label>
+            <label className="label-caps block mb-2">{t('reset_pw_label')}</label>
             <input
               type="password"
               value={password}
@@ -61,7 +63,7 @@ export function ResetPasswordPage() {
               required
               className="w-full px-4 py-3 rounded-xl text-sm border focus:outline-none"
               style={{ background: 'var(--elevated)', border: '1px solid var(--border)', color: 'var(--text)' }}
-              placeholder="Min. 8 znaků, velké písmeno, číslice"
+              placeholder={t('reset_placeholder')}
             />
           </div>
 
@@ -73,7 +75,7 @@ export function ResetPasswordPage() {
             className="w-full py-3 rounded-xl font-semibold text-sm disabled:opacity-60"
             style={{ background: 'var(--primary)', color: 'var(--primary-fg)' }}
           >
-            {loading ? 'Ukládám…' : 'Nastavit nové heslo'}
+            {loading ? t('reset_saving') : t('reset_submit')}
           </button>
         </form>
       </div>

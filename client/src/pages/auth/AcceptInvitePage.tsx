@@ -6,9 +6,11 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../../lib/api';
 import { storeTokens, storeUser } from '../../lib/auth';
+import { useTranslation } from '../../lib/i18n';
 import type { UserProfile } from '@shared/types';
 
 export function AcceptInvitePage() {
+  const { t } = useTranslation();
   const [params] = useSearchParams();
   const token = params.get('token') ?? '';
   const navigate = useNavigate();
@@ -32,7 +34,7 @@ export function AcceptInvitePage() {
       navigate('/admin');
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { error?: { message?: string } } } })?.response?.data?.error?.message;
-      setError(msg ?? 'Nastala chyba, zkus to znovu.');
+      setError(msg ?? t('accept_error'));
     } finally {
       setLoading(false);
     }
@@ -41,7 +43,7 @@ export function AcceptInvitePage() {
   if (!token) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--background)' }}>
-        <p style={{ color: 'var(--muted)' }}>Neplatný odkaz.</p>
+        <p style={{ color: 'var(--muted)' }}>{t('accept_invalid')}</p>
       </div>
     );
   }
@@ -51,12 +53,12 @@ export function AcceptInvitePage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
           <div className="text-2xl font-bold tracking-tight mb-1" style={{ color: 'var(--text)' }}>Mo.one</div>
-          <div className="text-sm" style={{ color: 'var(--muted)' }}>Přijmout pozvánku</div>
+          <div className="text-sm" style={{ color: 'var(--muted)' }}>{t('accept_subtitle')}</div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="label-caps block mb-2">Tvoje jméno</label>
+            <label className="label-caps block mb-2">{t('accept_name_label')}</label>
             <input
               type="text"
               value={name}
@@ -64,12 +66,12 @@ export function AcceptInvitePage() {
               required
               className="w-full px-4 py-3 rounded-xl text-sm border focus:outline-none"
               style={{ background: 'var(--elevated)', border: '1px solid var(--border)', color: 'var(--text)' }}
-              placeholder="Jméno Příjmení"
+              placeholder={t('accept_name_placeholder')}
             />
           </div>
 
           <div>
-            <label className="label-caps block mb-2">Nové heslo</label>
+            <label className="label-caps block mb-2">{t('accept_pw_label')}</label>
             <input
               type="password"
               value={password}
@@ -77,7 +79,7 @@ export function AcceptInvitePage() {
               required
               className="w-full px-4 py-3 rounded-xl text-sm border focus:outline-none"
               style={{ background: 'var(--elevated)', border: '1px solid var(--border)', color: 'var(--text)' }}
-              placeholder="Min. 8 znaků, velké písmeno, číslice"
+              placeholder={t('accept_pw_placeholder')}
             />
           </div>
 
@@ -89,7 +91,7 @@ export function AcceptInvitePage() {
             className="w-full py-3 rounded-xl font-semibold text-sm transition-opacity disabled:opacity-60"
             style={{ background: 'var(--primary)', color: 'var(--primary-fg)' }}
           >
-            {loading ? 'Nastavuji účet…' : 'Aktivovat účet'}
+            {loading ? t('accept_loading') : t('accept_submit')}
           </button>
         </form>
       </div>

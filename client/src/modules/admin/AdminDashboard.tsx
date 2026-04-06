@@ -5,42 +5,44 @@
 import { Link } from 'react-router-dom';
 import { Palette, Image, Kanban, Users, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-
-const CARDS = [
-  {
-    to: '/admin/ci',
-    icon: Palette,
-    label: 'CI Editor',
-    desc: 'Edituj brand core — mise, hodnoty, hlas a positioning',
-    color: 'var(--primary)',
-  },
-  {
-    to: '/admin/moodboard',
-    icon: Image,
-    label: 'Mood Board',
-    desc: 'Sbírej vizuální reference a inspiraci pro corporate identity',
-    color: '#a855f7',
-  },
-  {
-    to: '/admin/projects',
-    icon: Kanban,
-    label: 'Projekty',
-    desc: 'Kanban board pro CI úkoly — To Do, In Progress, Review, Done',
-    color: 'var(--warning)',
-  },
-];
+import { useTranslation } from '../../lib/i18n';
 
 export function AdminDashboard() {
   const { user } = useAuth();
+  const { t } = useTranslation();
+
+  const CARDS = [
+    {
+      to: '/admin/ci',
+      icon: Palette,
+      label: t('nav_ci'),
+      desc: t('dashboard_ci_desc'),
+      color: 'var(--primary)',
+    },
+    {
+      to: '/admin/moodboard',
+      icon: Image,
+      label: t('nav_moodboard'),
+      desc: t('dashboard_moodboard_desc'),
+      color: '#a855f7',
+    },
+    {
+      to: '/admin/projects',
+      icon: Kanban,
+      label: t('nav_projects'),
+      desc: t('dashboard_projects_desc'),
+      color: 'var(--warning)',
+    },
+  ];
 
   return (
     <div className="p-8 animate-fade-in space-y-10">
       <div>
         <h1 className="text-2xl font-bold tracking-tight mb-1" style={{ color: 'var(--text)' }}>
-          Vítej, {user?.name?.split(' ')[0] ?? 'tady'} 👋
+          {t('dashboard_greeting')} {user?.name?.split(' ')[0] ?? t('dashboard_greeting_fallback')} 👋
         </h1>
         <p className="text-sm" style={{ color: 'var(--muted)' }}>
-          Mo.one Brand Workspace — kde se buduje corporate identity.
+          {t('dashboard_subtitle')}
         </p>
       </div>
 
@@ -73,14 +75,14 @@ export function AdminDashboard() {
 
       {user?.role === 'admin' && (
         <div>
-          <p className="label-caps mb-4">Admin</p>
+          <p className="label-caps mb-4">{t('dashboard_admin_section')}</p>
           <Link
             to="/admin/users"
             className="inline-flex items-center gap-3 px-5 py-3 rounded-xl border text-sm font-medium"
             style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text)' }}
           >
             <Users size={16} style={{ color: 'var(--muted)' }} />
-            Správa uživatelů
+            {t('dashboard_manage_users')}
           </Link>
         </div>
       )}

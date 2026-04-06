@@ -1,14 +1,12 @@
 // =============================================================================
 // client/src/modules/public/GuidelinesPage.tsx — Public brand guidelines
-// Read-only version of the CI module for external audiences
 // =============================================================================
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../lib/api';
-import {
-  VALUES, COLORS, COLOR_SECTIONS, TYPOGRAPHY, ENTITIES,
-} from '../admin/ci/data';
+import { useTranslation } from '../../lib/i18n';
+import { VALUES, COLORS, COLOR_SECTIONS, TYPOGRAPHY, ENTITIES } from '../admin/ci/data';
 import type { CiEditable } from '@shared/types';
 
 const DEFAULTS = {
@@ -18,6 +16,7 @@ const DEFAULTS = {
 };
 
 export function GuidelinesPage() {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState<string | null>(null);
 
   const { data: ciData } = useQuery({
@@ -38,44 +37,33 @@ export function GuidelinesPage() {
     <div className="animate-fade-in space-y-20">
       {/* Header */}
       <div>
-        <p className="label-caps mb-3" style={{ color: 'var(--primary)' }}>BRAND GUIDELINES</p>
+        <p className="label-caps mb-3" style={{ color: 'var(--primary)' }}>{t('guidelines_eyebrow')}</p>
         <h1 className="text-4xl font-bold tracking-tight mb-4" style={{ color: 'var(--text)' }}>
-          Mo.one Corporate Identity
+          {t('guidelines_heading')}
         </h1>
         <p className="text-base max-w-2xl" style={{ color: 'var(--muted)' }}>
-          Tento dokument definuje vizuální a verbální identitu Mo.one holdingu.
-          Platí pro všechny právní entity, produkty a komunikační kanály.
+          {t('guidelines_desc')}
         </p>
       </div>
 
       {/* Mission */}
       <section id="mission">
-        <p className="label-caps mb-6">MISE</p>
-        <blockquote
-          className="text-2xl font-semibold leading-snug max-w-3xl mb-8"
-          style={{ color: 'var(--text)' }}
-        >
+        <p className="label-caps mb-6">{t('guidelines_mission_label')}</p>
+        <blockquote className="text-2xl font-semibold leading-snug max-w-3xl mb-8" style={{ color: 'var(--text)' }}>
           {ci.missionOne}
         </blockquote>
-        <div
-          className="p-6 rounded-2xl border inline-block"
-          style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
-        >
-          <p className="label-caps mb-2" style={{ color: 'var(--primary)' }}>BRAND PROMISE</p>
+        <div className="p-6 rounded-2xl border inline-block" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+          <p className="label-caps mb-2" style={{ color: 'var(--primary)' }}>{t('guidelines_promise_label')}</p>
           <p className="text-lg font-semibold" style={{ color: 'var(--text)' }}>{ci.brandPromise}</p>
         </div>
       </section>
 
       {/* Values */}
       <section id="values">
-        <p className="label-caps mb-6">HODNOTY</p>
+        <p className="label-caps mb-6">{t('guidelines_values_label')}</p>
         <div className="grid md:grid-cols-2 gap-4">
-          {ci.values.map((v) => (
-            <div
-              key={v.num}
-              className="p-6 rounded-2xl border"
-              style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
-            >
+          {ci.values.map(v => (
+            <div key={v.num} className="p-6 rounded-2xl border" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
               <div className="flex items-center gap-3 mb-3">
                 <span className="label-caps" style={{ color: 'var(--primary)' }}>{v.num}</span>
                 <h3 className="font-semibold" style={{ color: 'var(--text)' }}>{v.title}</h3>
@@ -88,10 +76,8 @@ export function GuidelinesPage() {
 
       {/* Colors */}
       <section id="colors">
-        <p className="label-caps mb-2">BARVY</p>
-        <p className="text-sm mb-6" style={{ color: 'var(--muted)' }}>
-          Modrá = interakce. Zelená = odměna. Nikdy naopak.
-        </p>
+        <p className="label-caps mb-2">{t('guidelines_colors_label')}</p>
+        <p className="text-sm mb-6" style={{ color: 'var(--muted)' }}>{t('guidelines_colors_rule')}</p>
         <div className="space-y-8">
           {COLOR_SECTIONS.map(section => (
             <div key={section.key}>
@@ -104,13 +90,10 @@ export function GuidelinesPage() {
                     className="flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-colors hover:border-[var(--primary)]"
                     style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
                   >
-                    <div
-                      className="w-8 h-8 rounded-lg border flex-shrink-0"
-                      style={{ background: token.hex, borderColor: 'var(--border)' }}
-                    />
+                    <div className="w-8 h-8 rounded-lg border flex-shrink-0" style={{ background: token.hex, borderColor: 'var(--border)' }} />
                     <div>
                       <p className="text-xs font-semibold" style={{ color: 'var(--text)' }}>
-                        {copied === token.hex ? 'Zkopírováno!' : token.hex}
+                        {copied === token.hex ? t('guidelines_copied') : token.hex}
                       </p>
                       <p className="text-xs" style={{ color: 'var(--muted)' }}>{token.name}</p>
                     </div>
@@ -124,16 +107,11 @@ export function GuidelinesPage() {
 
       {/* Typography */}
       <section id="typography">
-        <p className="label-caps mb-6">TYPOGRAFIE</p>
-        <div
-          className="p-6 rounded-2xl border mb-6"
-          style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
-        >
-          <p className="label-caps mb-2">PRIMÁRNÍ PÍSMO</p>
-          <p className="text-4xl font-bold" style={{ fontFamily: 'Figtree, sans-serif', color: 'var(--text)' }}>
-            Figtree
-          </p>
-          <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>300 – 900 váhy · Google Fonts</p>
+        <p className="label-caps mb-6">{t('guidelines_typography_label')}</p>
+        <div className="p-6 rounded-2xl border mb-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+          <p className="label-caps mb-2">{t('guidelines_font_label')}</p>
+          <p className="text-4xl font-bold" style={{ fontFamily: 'Figtree, sans-serif', color: 'var(--text)' }}>Figtree</p>
+          <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>{t('guidelines_font_weights')}</p>
         </div>
         <div className="space-y-3">
           {TYPOGRAPHY.map(spec => (
@@ -156,14 +134,10 @@ export function GuidelinesPage() {
 
       {/* Entities */}
       <section id="entities">
-        <p className="label-caps mb-6">ENTITY & SUB-BRANDY</p>
+        <p className="label-caps mb-6">{t('guidelines_entities_label')}</p>
         <div className="grid md:grid-cols-2 gap-4">
           {ENTITIES.map(e => (
-            <div
-              key={e.name}
-              className="p-6 rounded-2xl border"
-              style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
-            >
+            <div key={e.name} className="p-6 rounded-2xl border" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-3 h-3 rounded-full" style={{ background: e.color }} />
                 <div>
@@ -174,11 +148,7 @@ export function GuidelinesPage() {
               <p className="text-sm leading-relaxed mb-3" style={{ color: 'var(--muted)' }}>{e.desc}</p>
               <div className="flex flex-wrap gap-1.5">
                 {e.products.map(p => (
-                  <span
-                    key={p}
-                    className="text-xs px-2 py-0.5 rounded-full"
-                    style={{ background: 'var(--elevated)', color: 'var(--muted)' }}
-                  >
+                  <span key={p} className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'var(--elevated)', color: 'var(--muted)' }}>
                     {p}
                   </span>
                 ))}
