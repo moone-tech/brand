@@ -17,21 +17,22 @@ api.interceptors.request.use(config => {
   return config;
 });
 
-// Handle 401: attempt token refresh
+// Handle 401: attempt token refresh (once per request — _retry flag prevents infinite loop)
 let refreshing: Promise<void> | null = null;
 
 api.interceptors.response.use(
   res => res,
   async (error: AxiosError<ApiError>) => {
-    const original = error.config;
-    if (error.response?.status !== 401 || !original) throw error;
+    const original = error.config as typeof error.config & { _retry?: boolean };
+    // Bail out if not a 401, no config, or already retried — prevents infinite loop
+    if (error.response?.status !== 401 || !original || original._retry) throw error;
+    original._retry = true;
 
     if (!refreshing) {
       refreshing = (async () => {
         const refreshToken = localStorage.getItem('brand-refresh-token');
         if (!refreshToken) {
           localStorage.removeItem('brand-access-token');
-          localStorage.removeItem('brand-refresh-token');
           window.dispatchEvent(new Event('auth:logout'));
           return;
         }
@@ -48,6 +49,8 @@ api.interceptors.response.use(
     }
 
     await refreshing;
+    // Only retry if we successfully refreshed (token exists)
+    if (!localStorage.getItem('brand-access-token')) throw error;
     return api(original);
   },
 );
