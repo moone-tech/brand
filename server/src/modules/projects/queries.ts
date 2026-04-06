@@ -12,12 +12,14 @@ import type { UUID, TaskStatus, TaskPriority, UserRole } from '@shared/types';
 export async function listProjects() {
   const { rows } = await db.query(
     `SELECT p.*, u.name AS created_by_name,
+            o.name AS owner_name,
             COUNT(t.id) FILTER (WHERE t.deleted_at IS NULL) AS task_count
      FROM projects p
      JOIN users u ON u.id = p.created_by_id
+     LEFT JOIN users o ON o.id = p.owner_id
      LEFT JOIN tasks t ON t.project_id = p.id
      WHERE p.deleted_at IS NULL
-     GROUP BY p.id, u.name
+     GROUP BY p.id, u.name, o.name
      ORDER BY p.created_at DESC`,
   );
   return rows;
@@ -40,6 +42,34 @@ export async function createProject(data: {
 
 export async function deleteProject(id: UUID) {
   await db.query('UPDATE projects SET deleted_at = NOW() WHERE id = $1', [id]);
+}
+
+export async function updateProject(id: UUID, data: {
+  name?: string;
+  description?: string | null;
+  color?: string;
+  ownerId?: UUID | null;
+  teamMemberIds?: UUID[];
+  columns?: { status: string; label: string }[];
+}) {
+  const sets: string[] = [];
+  const vals: unknown[] = [];
+  let i = 1;
+
+  if (data.name !== undefined) { sets.push(`name = $${i++}`); vals.push(data.name); }
+  if (data.description !== undefined) { sets.push(`description = $${i++}`); vals.push(data.description); }
+  if (data.color !== undefined) { sets.push(`color = $${i++}`); vals.push(data.color); }
+  if (data.ownerId !== undefined) { sets.push(`owner_id = $${i++}`); vals.push(data.ownerId); }
+  if (data.teamMemberIds !== undefined) { sets.push(`team_member_ids = $${i++}`); vals.push(data.teamMemberIds); }
+  if (data.columns !== undefined) { sets.push(`columns = $${i++}`); vals.push(JSON.stringify(data.columns)); }
+
+  if (sets.length === 0) return;
+  vals.push(id);
+
+  await db.query(
+    `UPDATE projects SET ${sets.join(', ')} WHERE id = $${i} AND deleted_at IS NULL`,
+    vals,
+  );
 }
 
 // ---------------------------------------------------------------------------

@@ -21,6 +21,18 @@ export const createTaskSchema = z.object({
   tags: z.array(z.string()).max(10).optional(),
 });
 
+export const updateProjectSchema = z.object({
+  name: z.string().min(1).max(120).optional(),
+  description: z.string().max(500).nullable().optional(),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+  ownerId: z.string().uuid().nullable().optional(),
+  teamMemberIds: z.array(z.string().uuid()).optional(),
+  columns: z.array(z.object({
+    status: z.enum(['todo', 'in_progress', 'review', 'done']),
+    label: z.string().min(1).max(60),
+  })).optional(),
+});
+
 export const updateTaskSchema = z.object({
   title: z.string().min(1).max(300).optional(),
   description: z.string().max(5000).nullable().optional(),

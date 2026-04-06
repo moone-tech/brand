@@ -3,15 +3,18 @@
 // =============================================================================
 
 import { Link, useLocation, Outlet } from 'react-router-dom';
-
-const NAV = [
-  { to: '/', label: 'Přehled' },
-  { to: '/guidelines', label: 'Brand Guidelines' },
-  { to: '/assets', label: 'Assety' },
-];
+import { useTranslation } from '../lib/i18n';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 export function PublicLayout() {
   const { pathname } = useLocation();
+  const { t, lang, setLang } = useTranslation();
+
+  const NAV = [
+    { to: '/', label: t('nav_overview') },
+    { to: '/guidelines', label: t('nav_guidelines') },
+    { to: '/assets', label: t('nav_assets') },
+  ];
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--background)' }}>
@@ -41,13 +44,31 @@ export function PublicLayout() {
             ))}
           </nav>
 
-          <Link
-            to="/auth/login"
-            className="text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-            style={{ color: 'var(--muted)' }}
-          >
-            Tým →
-          </Link>
+          <div className="flex items-center gap-2">
+            <ThemeToggle compact />
+            <div className="flex gap-1">
+              {(['cs', 'en'] as const).map(l => (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  className="text-xs font-semibold px-2 py-1 rounded-md transition-colors"
+                  style={{
+                    color: lang === l ? 'var(--text)' : 'var(--muted)',
+                    background: lang === l ? 'var(--elevated)' : 'transparent',
+                  }}
+                >
+                  {l.toUpperCase()}
+                </button>
+              ))}
+            </div>
+            <Link
+              to="/auth/login"
+              className="text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+              style={{ color: 'var(--muted)' }}
+            >
+              {t('nav_team')}
+            </Link>
+          </div>
         </div>
       </header>
 

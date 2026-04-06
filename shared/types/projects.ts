@@ -4,12 +4,21 @@
 
 import type { UUID, ISODate, TaskStatus, TaskPriority, BaseEntity } from './common';
 
+export interface ColumnConfig {
+  status: TaskStatus;
+  label: string;
+}
+
 export interface Project extends BaseEntity {
   name: string;
   description: string | null;
   color: string;
   createdById: UUID;
   createdByName: string;
+  ownerId: UUID | null;
+  ownerName: string | null;
+  teamMemberIds: UUID[];
+  columns: ColumnConfig[] | null;
 }
 
 export interface Task extends BaseEntity {
@@ -31,6 +40,15 @@ export interface CreateProjectInput {
   name: string;
   description?: string;
   color?: string;
+}
+
+export interface UpdateProjectInput {
+  name?: string;
+  description?: string;
+  color?: string;
+  ownerId?: UUID | null;
+  teamMemberIds?: UUID[];
+  columns?: ColumnConfig[];
 }
 
 export interface CreateTaskInput {

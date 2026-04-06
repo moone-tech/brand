@@ -5,7 +5,7 @@
 import { Router } from 'express';
 import { authenticate, requireRole } from '../../middleware/auth';
 import * as q from './queries';
-import { createProjectSchema, createTaskSchema, updateTaskSchema } from './validation';
+import { createProjectSchema, createTaskSchema, updateTaskSchema, updateProjectSchema } from './validation';
 
 const router = Router();
 
@@ -29,6 +29,14 @@ router.post('/', requireRole('admin', 'editor'), async (req, res, next) => {
       createdById: req.user!.id,
     });
     res.status(201).json({ data: project });
+  } catch (err) { next(err); }
+});
+
+router.patch('/:id', requireRole('admin', 'editor'), async (req, res, next) => {
+  try {
+    const input = updateProjectSchema.parse(req.body);
+    await q.updateProject(req.params.id, input);
+    res.json({ data: { message: 'Projekt aktualizován.' } });
   } catch (err) { next(err); }
 });
 

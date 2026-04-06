@@ -5,23 +5,26 @@
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { LayoutGrid, Palette, Image, Kanban, Users, LogOut, ExternalLink } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useTranslation } from '../lib/i18n';
+import { ThemeToggle } from '../components/ThemeToggle';
 import { cn } from '../lib/cn';
-
-const NAV = [
-  { to: '/admin', label: 'Přehled', icon: LayoutGrid, exact: true },
-  { to: '/admin/ci', label: 'CI Editor', icon: Palette },
-  { to: '/admin/moodboard', label: 'Mood Board', icon: Image },
-  { to: '/admin/projects', label: 'Projekty', icon: Kanban },
-];
-
-const ADMIN_NAV = [
-  { to: '/admin/users', label: 'Uživatelé', icon: Users },
-];
 
 export function AdminLayout() {
   const { pathname } = useLocation();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { t, lang, setLang } = useTranslation();
+
+  const NAV = [
+    { to: '/admin', label: t('nav_admin'), icon: LayoutGrid, exact: true },
+    { to: '/admin/ci', label: t('nav_ci'), icon: Palette },
+    { to: '/admin/moodboard', label: t('nav_moodboard'), icon: Image },
+    { to: '/admin/projects', label: t('nav_projects'), icon: Kanban },
+  ];
+
+  const ADMIN_NAV = [
+    { to: '/admin/users', label: t('nav_users'), icon: Users },
+  ];
 
   function isActive(to: string, exact = false) {
     return exact ? pathname === to : pathname.startsWith(to);
@@ -94,6 +97,26 @@ export function AdminLayout() {
           )}
         </nav>
 
+        {/* Controls: theme + lang */}
+        <div className="px-3 py-2 border-t flex items-center gap-2" style={{ borderColor: 'var(--border)' }}>
+          <ThemeToggle compact />
+          <div className="flex gap-1 flex-1">
+            {(['cs', 'en'] as const).map(l => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                className="flex-1 text-xs font-semibold py-1.5 rounded-lg transition-colors"
+                style={{
+                  background: lang === l ? 'var(--elevated)' : 'transparent',
+                  color: lang === l ? 'var(--text)' : 'var(--muted)',
+                }}
+              >
+                {l.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* User */}
         <div className="px-2 py-3 border-t" style={{ borderColor: 'var(--border)' }}>
           <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl" style={{ background: 'var(--elevated)' }}>
@@ -110,7 +133,7 @@ export function AdminLayout() {
             <button
               onClick={handleLogout}
               className="opacity-50 hover:opacity-100 transition-opacity flex-shrink-0"
-              title="Odhlásit se"
+              title={t('logout')}
             >
               <LogOut size={14} style={{ color: 'var(--muted)' }} />
             </button>

@@ -5,6 +5,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthContext, useAuthState } from './hooks/useAuth';
+import { LangProvider } from './lib/i18n';
 
 // Layouts
 import { PublicLayout } from './layouts/PublicLayout';
@@ -89,7 +90,9 @@ function AppRoutes() {
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppRoutes />
+      <LangProvider>
+        <AppRoutes />
+      </LangProvider>
     </QueryClientProvider>
   );
 }
