@@ -1,106 +1,215 @@
+/* Figtree loaded via <link> in index.html — preconnect + stylesheet for optimal performance */
 @import "tailwindcss";
 
-/* =============================================================================
-   Mo.one Brand — Design System Tokens
-   Dark-first: :root = light, .dark = dark (default: dark)
-   ============================================================================= */
+/*
+ * Mo.one Brand — Design System
+ * "PREMIUM pro každého" — Tesla precision. Wireframe minimalism. Dark-first.
+ *
+ * Dual-color semantic (KRITICKÉ):
+ *   🔵 --primary (blue)  → akce, CTA, interakce, aktivní nav, in-progress
+ *   🟢 --reward  (green) → odměna, earned, success, splněno — NIKDE JINDE
+ *   🔴 --destructive     → chyba, destruktivní akce POUZE
+ *   🟡 --warning         → upozornění (ne chyba, ne odměna)
+ *
+ * Zelená NENÍ pro interakci. Modrá NENÍ pro odměny.
+ */
 
-@theme {
-  --font-family-sans: "Figtree", "Inter", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-  --radius: 0.75rem;
+@variant dark (&:where(.dark, .dark *));
 
-  /* Color tokens — light mode */
-  --color-background: #f5f5f5;
-  --color-surface: #ffffff;
-  --color-elevated: #f0f0f0;
-  --color-border: #e5e5e5;
-  --color-text: #141414;
-  --color-muted: #737373;
-  --color-primary: #2563eb;
-  --color-primary-foreground: #ffffff;
-  --color-reward: #16a34a;
-  --color-reward-foreground: #ffffff;
-  --color-destructive: #dc2626;
-  --color-warning: #d97706;
-}
-
+/* ── Light theme — Tesla-inspired baseline ─────────────────────────────────── */
 :root {
   color-scheme: light;
-  --background: #f5f5f5;
-  --surface: #ffffff;
-  --elevated: #f0f0f0;
-  --border: #e5e5e5;
-  --text: #141414;
-  --muted: #737373;
-  --primary: #2563eb;
-  --primary-fg: #ffffff;
-  --reward: #16a34a;
-  --reward-fg: #ffffff;
-  --destructive: #dc2626;
-  --warning: #d97706;
+
+  --background:    hsl(0 0% 96%);          /* #f5f5f5 — Tesla light gray */
+  --surface:       hsl(0 0% 100%);         /* #ffffff — pure white cards */
+  --elevated:      hsl(0 0% 93%);          /* #ededed — secondary surface */
+  --border:        hsl(0 0% 85%);          /* #d9d9d9 — thin border */
+  --text:          hsl(0 0% 8%);           /* #141414 — near-black */
+  --muted:         hsl(0 0% 46%);          /* #757575 — muted text */
+
+  --primary:       hsl(221 83% 53%);       /* #2563eb — action blue */
+  --primary-fg:    hsl(0 0% 100%);
+  --reward:        hsl(142 72% 35%);       /* #16a34a — earned/success */
+  --reward-fg:     hsl(0 0% 100%);
+  --destructive:   hsl(0 72% 51%);         /* #dc2626 — errors only */
+  --warning:       hsl(38 92% 50%);        /* #f59e0b */
 }
 
+/* ── Dark theme — Mo.one corporate identity ────────────────────────────────── */
 .dark {
   color-scheme: dark;
-  --background: #0f0f0f;
-  --surface: #171717;
-  --elevated: #1f1f1f;
-  --border: #262626;
-  --text: #ffffff;
-  --muted: #737373;
-  --primary: #3b82f6;
-  --primary-fg: #ffffff;
-  --reward: #4ade80;
-  --reward-fg: #052e16;
-  --destructive: #ef4444;
-  --warning: #f59e0b;
+
+  --background:    hsl(0 0% 5%);           /* #0d0d0d — near-black */
+  --surface:       hsl(0 0% 8%);           /* #141414 — card bg */
+  --elevated:      hsl(0 0% 11%);          /* #1c1c1c — secondary surface */
+  --border:        hsl(0 0% 14%);          /* #242424 — subtle divider */
+  --text:          hsl(0 0% 98%);          /* #fafafa */
+  --muted:         hsl(0 0% 42%);          /* #6b6b6b */
+
+  --primary:       hsl(217 91% 60%);       /* #3b82f6 */
+  --primary-fg:    hsl(0 0% 100%);
+  --reward:        hsl(142 70% 58%);       /* #4ade80 */
+  --reward-fg:     hsl(150 100% 9%);       /* #052e16 */
+  --destructive:   hsl(0 84% 60%);         /* #ef4444 */
+  --warning:       hsl(38 92% 50%);        /* #f59e0b */
 }
 
-/* Base */
-*, *::before, *::after { box-sizing: border-box; }
+/* ── Tailwind v4 theme registration ────────────────────────────────────────── */
+@theme inline {
+  --font-sans: "Figtree", "Inter", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 
-body {
-  margin: 0;
-  background: var(--background);
-  color: var(--text);
-  font-family: var(--font-family-sans);
-  font-size: 15px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+  --color-background:  var(--background);
+  --color-surface:     var(--surface);
+  --color-elevated:    var(--elevated);
+  --color-border:      var(--border);
+  --color-text:        var(--text);
+  --color-muted:       var(--muted);
+  --color-primary:     var(--primary);
+  --color-primary-fg:  var(--primary-fg);
+  --color-reward:      var(--reward);
+  --color-reward-fg:   var(--reward-fg);
+  --color-destructive: var(--destructive);
+  --color-warning:     var(--warning);
+
+  /*
+   * Radius scale — Tesla precision (shifted -4px vs Tailwind defaults)
+   * rounded    → 8 px   (was 4 px default)
+   * rounded-lg → 8 px
+   * rounded-xl → 8 px   (was 12 px) — cards, modals
+   * rounded-2xl→ 12 px  (was 16 px) — large containers
+   * rounded-3xl→ 16 px  (was 24 px)
+   * rounded-full kept at 9999 px
+   */
+  --radius:     0.5rem;    /*  8 px */
+  --radius-sm:  0.25rem;   /*  4 px */
+  --radius-md:  0.375rem;  /*  6 px */
+  --radius-lg:  0.5rem;    /*  8 px */
+  --radius-xl:  0.5rem;    /*  8 px — was 0.75rem */
+  --radius-2xl: 0.75rem;   /* 12 px — was 1rem */
+  --radius-3xl: 1rem;      /* 16 px — was 1.5rem */
 }
 
-/* Utility classes */
-.bg-surface { background: var(--surface); }
-.bg-elevated { background: var(--elevated); }
-.border-default { border-color: var(--border); }
-.text-muted { color: var(--muted); }
-.text-primary { color: var(--primary); }
-.text-reward { color: var(--reward); }
-.text-destructive { color: var(--destructive); }
+/* ── Base layer ─────────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    border-color: var(--border);
+    -webkit-tap-highlight-color: transparent;
+  }
 
-.label-caps {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
+  html {
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    overscroll-behavior: none;
+  }
+
+  body {
+    margin: 0;
+    height: 100%;
+    background: var(--background);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.01em;        /* Tesla tight premium feel */
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+
+  /* Prevent zoom on mobile inputs */
+  @media (max-width: 767px) {
+    input:not([type='checkbox']):not([type='radio']):not([type='range']),
+    select,
+    textarea {
+      font-size: max(16px, 1em);
+    }
+  }
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+/* ── Utilities ──────────────────────────────────────────────────────────────── */
+@layer utilities {
+  /* Semantic color shortcuts */
+  .bg-surface      { background: var(--surface); }
+  .bg-elevated     { background: var(--elevated); }
+  .border-default  { border-color: var(--border); }
+  .text-muted      { color: var(--muted); }
+  .text-primary    { color: var(--primary); }
+  .text-reward     { color: var(--reward); }
+  .text-destructive { color: var(--destructive); }
+
+  /* Tesla-style small-caps section label */
+  .label-caps {
+    font-size: 0.625rem;           /* 10px */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    opacity: 0.65;
+  }
+
+  /* Hide scrollbar but preserve scroll */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Mobile safe area padding (below bottom nav) */
+  .pb-mobile-nav {
+    padding-bottom: 0;
+  }
+  @media (max-width: 767px) {
+    .pb-mobile-nav {
+      padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+    }
+  }
+}
+
+/* ── Scrollbar — styled, minimal ────────────────────────────────────────────── */
+::-webkit-scrollbar            { width: 4px; height: 4px; }
+::-webkit-scrollbar-track      { background: transparent; }
+::-webkit-scrollbar-thumb      { background: var(--border); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
-/* Focus ring */
+/* ── Focus ring ─────────────────────────────────────────────────────────────── */
 :focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
-/* Animations */
+/* ── Animations ─────────────────────────────────────────────────────────────── */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in { animation: fade-in 0.2s ease-out; }
+
+/* CI module animations (shared with Brain) */
+@keyframes ci-slide {
+  from { left: 4px; }
+  to   { left: calc(100% - 36px); }
+}
+@keyframes ci-grow-w {
+  from { width: 0; }
+  to   { width: var(--ci-target-w, 100%); }
+}
+
+/* ── Print ──────────────────────────────────────────────────────────────────── */
+@media print {
+  @page { size: A4; margin: 1.8cm 2cm; }
+  aside, .no-print { display: none !important; }
+  body { display: block !important; background: white !important; }
+  * {
+    color: #111 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .border, [class*="border-"] { border-color: #d1d5db !important; }
+  h1, h2, h3 { page-break-after: avoid; }
+}
