@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom'
 import { Pencil, Check, RotateCcw, Target, Lightbulb, Zap, Handshake, CreditCard, Smartphone, Store, Star, Monitor, Presentation, Printer, Megaphone, Mail, ShoppingBag, MessageCircle, Gift, MapPin, Wallet, ArrowLeftRight, Users, FileText, User, MoreHorizontal, Bell, Search as SearchIcon, ChevronLeft, ChevronDown, Home as HomeIcon, Play, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import {
-  COLORS, COLOR_SECTIONS,
+  VALUES, VOICE_EXAMPLES, COLORS, COLOR_SECTIONS,
   TYPOGRAPHY, SPACING_SCALE, RADII, ENTITIES,
   type CiValue, type VoiceExample,
 } from './data'
@@ -641,29 +641,19 @@ function ImagerySection() {
           <div>
             <div className="text-xs font-semibold mb-1">CSS filter</div>
             <code className="text-xs font-mono text-primary block bg-muted/60 rounded-lg p-3 leading-relaxed">
-              {'filter: contrast(1.15)
-  saturate(0.55)
-  brightness(0.72);'}
+              {'filter: contrast(1.15)\n  saturate(0.55)\n  brightness(0.72);'}
             </code>
           </div>
           <div>
             <div className="text-xs font-semibold mb-1">Dark overlay</div>
             <code className="text-xs font-mono text-primary block bg-muted/60 rounded-lg p-3 leading-relaxed">
-              {'background: linear-gradient(
-  to bottom,
-  rgba(0,0,0,.15),
-  rgba(0,0,0,.55)
-);'}
+              {'background: linear-gradient(\n  to bottom,\n  rgba(0,0,0,.15),\n  rgba(0,0,0,.55)\n);'}
             </code>
           </div>
           <div>
             <div className="text-xs font-semibold mb-1">Green reward accent</div>
             <code className="text-xs font-mono text-primary block bg-muted/60 rounded-lg p-3 leading-relaxed">
-              {'background: linear-gradient(
-  to top right,
-  rgba(74,222,128,.07),
-  transparent
-);'}
+              {'background: linear-gradient(\n  to top right,\n  rgba(74,222,128,.07),\n  transparent\n);'}
             </code>
           </div>
         </div>
@@ -1669,8 +1659,8 @@ function ContactsScreen({ t, device, onNav, onProfileExit }: { t: AT; device: De
 
 // ── Story Viewer ──────────────────────────────────────────────────
 
-function StoryScreen({ story, idx, total, _t: _t, device, onPrev, onNext, onClose }:
-  { story: Story; idx: number; total: number; _t: AT; device: DeviceType
+function StoryScreen({ story, idx, total, t, device, onPrev, onNext, onClose }:
+  { story: Story; idx: number; total: number; t: AT; device: DeviceType
     onPrev: () => void; onNext: () => void; onClose: () => void }) {
   const [showDetail, setShowDetail] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -1836,7 +1826,7 @@ function DesktopDeviceModal({
 }: {
   device: DeviceType; theme: AppTheme
   simScreen: AppScreen; setSimScreen: (s: AppScreen) => void
-  simStory: number; setSimStory: React.Dispatch<React.SetStateAction<number>> // eslint-disable-line
+  simStory: number; setSimStory: React.Dispatch<React.SetStateAction<number>>
   openSimStory: (idx: number) => void
   simPrevStory: () => void; simNextStory: () => void
   onClose: () => void
