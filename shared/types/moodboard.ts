@@ -2,7 +2,7 @@
 // shared/types/moodboard.ts — Mood board types
 // =============================================================================
 
-import type { UUID, ISODate, MoodboardItemType, BaseEntity } from './common';
+import type { UUID, MoodboardItemType, BaseEntity } from './common';
 
 export interface MoodboardBoard extends BaseEntity {
   name: string;
