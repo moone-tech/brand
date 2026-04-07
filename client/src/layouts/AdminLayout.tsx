@@ -8,6 +8,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from '../lib/i18n';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { AdminBottomNav } from '../components/AdminBottomNav';
+import { MooneLogo } from '../components/MooneLogo';
 import { cn } from '../lib/cn';
 
 export function AdminLayout() {
@@ -47,7 +48,7 @@ export function AdminLayout() {
         {/* Logo */}
         <div className="px-4 py-5 border-b" style={{ borderColor: 'var(--border)' }}>
           <Link to="/" className="flex items-center gap-2 group" target="_blank">
-            <span className="font-bold text-base tracking-tight" style={{ color: 'var(--text)' }}>Mo.one</span>
+            <MooneLogo height={20} style={{ color: 'var(--text)' }} />
             <span className="label-caps">Brand</span>
             <ExternalLink size={11} className="opacity-0 group-hover:opacity-40 transition-opacity" style={{ color: 'var(--muted)' }} />
           </Link>

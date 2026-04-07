@@ -6,6 +6,7 @@ import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useTranslation } from '../lib/i18n';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { PublicBottomNav } from '../components/PublicBottomNav';
+import { MooneLogo } from '../components/MooneLogo';
 
 export function PublicLayout() {
   const { pathname } = useLocation();
@@ -25,8 +26,8 @@ export function PublicLayout() {
         style={{ background: 'var(--background)', borderColor: 'var(--border)' }}
       >
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="font-bold text-lg tracking-tight" style={{ color: 'var(--text)' }}>
-            Mo.one
+          <Link to="/" className="flex items-center" style={{ color: 'var(--text)' }}>
+            <MooneLogo height={22} />
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
@@ -81,7 +82,7 @@ export function PublicLayout() {
       {/* Footer — hidden on mobile (bottom nav replaces it) */}
       <footer className="hidden md:block border-t mt-24 py-8" style={{ borderColor: 'var(--border)' }}>
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-          <span className="text-sm font-semibold" style={{ color: 'var(--text)' }}>Mo.one</span>
+          <MooneLogo height={16} style={{ color: 'var(--text)' }} />
           <span className="text-xs" style={{ color: 'var(--muted)' }}>© 2026 Mo.one a.s.</span>
         </div>
       </footer>

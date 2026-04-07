@@ -6,6 +6,7 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { api } from '../../lib/api';
 import { useTranslation } from '../../lib/i18n';
+import { MooneLogo } from '../../components/MooneLogo';
 
 export function ResetPasswordPage() {
   const { t } = useTranslation();
@@ -49,7 +50,7 @@ export function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--background)' }}>
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
-          <div className="text-2xl font-bold tracking-tight mb-1" style={{ color: 'var(--text)' }}>Mo.one</div>
+          <div className="flex justify-center mb-1"><MooneLogo height={30} style={{ color: 'var(--text)' }} /></div>
           <div className="text-sm" style={{ color: 'var(--muted)' }}>{t('reset_subtitle')}</div>
         </div>
 

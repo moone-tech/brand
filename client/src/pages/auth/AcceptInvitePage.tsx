@@ -8,6 +8,7 @@ import { api } from '../../lib/api';
 import { storeTokens, storeUser } from '../../lib/auth';
 import { useAuth } from '../../hooks/useAuth';
 import { useTranslation } from '../../lib/i18n';
+import { MooneLogo } from '../../components/MooneLogo';
 import type { UserProfile } from '@shared/types';
 
 interface InvitePreview {
@@ -94,7 +95,7 @@ export function AcceptInvitePage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--background)' }}>
         <div className="w-full max-w-sm text-center">
-          <div className="text-2xl font-bold tracking-tight mb-6" style={{ color: 'var(--text)' }}>Mo.one</div>
+          <div className="flex justify-center mb-6"><MooneLogo height={30} style={{ color: 'var(--text)' }} /></div>
           <p className="text-sm mb-6" style={{ color: 'var(--destructive)' }}>{previewError}</p>
           <a
             href="/auth/login"
@@ -113,7 +114,7 @@ export function AcceptInvitePage() {
     <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--background)' }}>
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
-          <div className="text-2xl font-bold tracking-tight mb-1" style={{ color: 'var(--text)' }}>Mo.one</div>
+          <div className="flex justify-center mb-1"><MooneLogo height={30} style={{ color: 'var(--text)' }} /></div>
           <div className="text-sm" style={{ color: 'var(--muted)' }}>{t('accept_subtitle')}</div>
           {preview && (
             <div className="mt-3 text-xs" style={{ color: 'var(--muted)' }}>
