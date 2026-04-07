@@ -5,7 +5,6 @@
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useTranslation } from '../lib/i18n';
 import { ThemeToggle } from '../components/ThemeToggle';
-import { PublicBottomNav } from '../components/PublicBottomNav';
 import { MooneLogo } from '../components/MooneLogo';
 
 export function PublicLayout() {
@@ -30,12 +29,12 @@ export function PublicLayout() {
             <MooneLogo height={22} />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="flex items-center gap-1">
             {NAV.map(item => (
               <Link
                 key={item.to}
                 to={item.to}
-                className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                className="px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap"
                 style={{
                   color: pathname === item.to ? 'var(--primary)' : 'var(--muted)',
                   background: pathname === item.to ? 'color-mix(in srgb, var(--primary) 10%, transparent)' : 'transparent',
@@ -46,9 +45,9 @@ export function PublicLayout() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <ThemeToggle compact />
-            <div className="flex gap-1">
+            <div className="hidden sm:flex gap-1">
               {(['cs', 'en'] as const).map(l => (
                 <button
                   key={l}
@@ -65,7 +64,7 @@ export function PublicLayout() {
             </div>
             <Link
               to="/auth/login"
-              className="text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+              className="text-sm font-medium px-3 py-2 rounded-lg transition-colors whitespace-nowrap"
               style={{ color: 'var(--muted)' }}
             >
               {t('nav_team')}
@@ -75,20 +74,17 @@ export function PublicLayout() {
       </header>
 
       {/* Content */}
-      <main className="max-w-6xl mx-auto px-6 pt-6 pb-mobile-nav md:pb-12">
+      <main className="max-w-6xl mx-auto px-6 pt-6 pb-12">
         <Outlet />
       </main>
 
-      {/* Footer — hidden on mobile (bottom nav replaces it) */}
-      <footer className="hidden md:block border-t mt-24 py-8" style={{ borderColor: 'var(--border)' }}>
+      {/* Footer */}
+      <footer className="border-t mt-16 py-8" style={{ borderColor: 'var(--border)' }}>
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
           <MooneLogo height={16} style={{ color: 'var(--text)' }} />
           <span className="text-xs" style={{ color: 'var(--muted)' }}>© 2026 Mo.one a.s.</span>
         </div>
       </footer>
-
-      {/* Mobile bottom navigation */}
-      <PublicBottomNav />
     </div>
   );
 }
