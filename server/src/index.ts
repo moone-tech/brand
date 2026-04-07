@@ -23,6 +23,7 @@ app.use(cors({
     const allowed = [
       config.server.clientUrl,
       /\.vercel\.app$/,
+      /\.mo\.one$/,
       /localhost/,
     ];
     if (!origin || allowed.some(p => typeof p === 'string' ? p === origin : p.test(origin))) {
