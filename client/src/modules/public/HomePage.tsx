@@ -33,58 +33,66 @@ export function HomePage() {
   return (
     <div className="animate-fade-in space-y-20">
 
-      {/* ── Hero text ─────────────────────────────────────────────────────────── */}
+      {/* ── Hero — full-bleed image with text overlay ─────────────────────── */}
       <section className="pt-10">
-        <p className="label-caps mb-5" style={{ color: 'var(--muted)' }}>
-          {t('home_eyebrow')}
-        </p>
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-end mb-10">
-          <h1
-            className="text-5xl md:text-6xl font-bold tracking-tight leading-tight"
-            style={{ color: 'var(--text)', letterSpacing: '-0.02em' }}
-          >
-            {t('home_hero_line1')}
-            <br />
-            {t('home_hero_line2')}
-          </h1>
-          <div>
-            <p className="text-base leading-relaxed mb-8" style={{ color: 'var(--muted)' }}>
-              {t('home_hero_desc')}
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <a
-                href="mailto:jkoudelka@mo.one"
-                className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90"
-                style={{ background: 'var(--primary)', color: 'var(--primary-fg)' }}
-              >
-                {t('home_cta_primary')} <ArrowRight size={15} />
-              </a>
-              <Link
-                to="/guidelines"
-                className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm border transition-colors hover:border-[var(--text)]"
-                style={{ borderColor: 'var(--border)', color: 'var(--text)' }}
-              >
-                {t('home_cta_guidelines')}
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Full-bleed hero image ─────────────────────────────────────────── */}
         <div
-          className="w-full overflow-hidden rounded-2xl"
-          style={{
-            height: 'clamp(300px, 52vw, 620px)',
-            border: '1px solid var(--border)',
-          }}
+          className="relative w-full overflow-hidden rounded-2xl"
+          style={{ height: 'clamp(420px, 60vw, 720px)' }}
         >
+          {/* Background image */}
           <img
             src="/hero.png"
             alt="Mo.one ecosystem — coffee, workspace, payments, lifestyle"
-            className="w-full h-full object-cover object-center"
+            className="absolute inset-0 w-full h-full object-cover object-center"
             loading="eager"
             decoding="async"
           />
+
+          {/* Dark gradient overlay — bottom-heavy so text at bottom is readable */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.12) 40%, rgba(0,0,0,0.72) 100%)',
+            }}
+          />
+
+          {/* Text content — sits in lower half */}
+          <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12">
+            <p className="label-caps mb-4" style={{ color: 'rgba(255,255,255,0.65)' }}>
+              {t('home_eyebrow')}
+            </p>
+            <div className="grid lg:grid-cols-2 gap-6 lg:gap-16 items-end">
+              <h1
+                className="text-4xl md:text-6xl font-bold tracking-tight leading-tight"
+                style={{ color: '#ffffff', letterSpacing: '-0.02em' }}
+              >
+                {t('home_hero_line1')}
+                <br />
+                {t('home_hero_line2')}
+              </h1>
+              <div>
+                <p className="text-sm md:text-base leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.75)' }}>
+                  {t('home_hero_desc')}
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <a
+                    href="mailto:jkoudelka@mo.one"
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90"
+                    style={{ background: 'var(--primary)', color: 'var(--primary-fg)' }}
+                  >
+                    {t('home_cta_primary')} <ArrowRight size={15} />
+                  </a>
+                  <Link
+                    to="/guidelines"
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm border transition-colors"
+                    style={{ borderColor: 'rgba(255,255,255,0.35)', color: '#ffffff', background: 'rgba(255,255,255,0.08)' }}
+                  >
+                    {t('home_cta_guidelines')}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
