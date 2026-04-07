@@ -77,7 +77,7 @@ export async function findInvitationByToken(token: string) {
   const { rows } = await db.query(
     `SELECT i.*, u.name AS invited_by_name
      FROM invitations i
-     JOIN users u ON u.id = i.invited_by_id
+     LEFT JOIN users u ON u.id = i.invited_by_id
      WHERE i.token = $1`,
     [token],
   );

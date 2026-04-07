@@ -131,6 +131,20 @@ export async function inviteUser(input: InviteUserInput, invitedById: UUID): Pro
   });
 }
 
+export async function previewInvite(token: string): Promise<{ name: string; email: string; invitedByName: string }> {
+  const invitation = await q.findInvitationByToken(token);
+  if (!invitation) throw new AppError('NOT_FOUND', 'Pozvánka nenalezena nebo vypršela', 404);
+  if (invitation.accepted_at) throw new AppError('CONFLICT', 'Pozvánka byla již použita', 409);
+  if (new Date(invitation.expires_at) < new Date()) {
+    throw new AppError('EXPIRED', 'Platnost pozvánky vypršela', 410);
+  }
+  return {
+    name: invitation.name,
+    email: invitation.email,
+    invitedByName: invitation.invited_by_name ?? '',
+  };
+}
+
 export async function acceptInvite(input: RegisterFromInviteInput): Promise<AuthResponse> {
   const invitation = await q.findInvitationByToken(input.token);
   if (!invitation) throw new AppError('NOT_FOUND', 'Pozvánka nenalezena', 404);

@@ -26,6 +26,16 @@ router.post('/login', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// Validate invite token and return invitation preview (name, email) before form submit
+router.get('/accept-invite', async (req, res, next) => {
+  try {
+    const token = String(req.query['token'] ?? '');
+    if (!token) { res.status(400).json({ error: { code: 'MISSING_TOKEN', message: 'Token je povinný' } }); return; }
+    const invitation = await svc.previewInvite(token);
+    res.json({ data: invitation });
+  } catch (err) { next(err); }
+});
+
 router.post('/accept-invite', async (req, res, next) => {
   try {
     const input = registerFromInviteSchema.parse(req.body);
