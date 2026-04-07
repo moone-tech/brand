@@ -4,7 +4,7 @@
 // =============================================================================
 
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutGrid, Palette, Image, Kanban, Users } from 'lucide-react';
+import { LayoutGrid, Palette, Image, Kanban, CalendarClock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from '../lib/i18n';
 import { cn } from '../lib/cn';
@@ -15,12 +15,12 @@ export function AdminBottomNav() {
   const { t } = useTranslation();
 
   const items = [
-    { to: '/admin',          label: t('nav_admin'),     icon: LayoutGrid, exact: true },
-    { to: '/admin/ci',       label: t('nav_ci'),        icon: Palette },
-    { to: '/admin/moodboard',label: t('nav_moodboard'), icon: Image },
-    { to: '/admin/projects', label: t('nav_projects'),  icon: Kanban },
+    { to: '/admin',           label: t('nav_admin'),      icon: LayoutGrid, exact: true },
+    { to: '/admin/ci',        label: t('nav_ci'),         icon: Palette },
+    { to: '/admin/moodboard', label: t('nav_moodboard'),  icon: Image },
+    { to: '/admin/projects',  label: t('nav_projects'),   icon: Kanban },
     ...(user?.role === 'admin'
-      ? [{ to: '/admin/users', label: t('nav_users'), icon: Users, exact: false }]
+      ? [{ to: '/admin/attendance', label: t('nav_attendance'), icon: CalendarClock, exact: false }]
       : []),
   ];
 

@@ -74,7 +74,7 @@ export function PublicLayout() {
       </header>
 
       {/* Content */}
-      <main className="max-w-6xl mx-auto px-6 py-12 pb-mobile-nav md:pb-12">
+      <main className="max-w-6xl mx-auto px-6 pt-6 pb-mobile-nav md:pb-12">
         <Outlet />
       </main>
 

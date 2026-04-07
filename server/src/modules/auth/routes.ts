@@ -116,4 +116,18 @@ router.delete('/users/:id', authenticate, requireRole('admin'), async (req, res,
   } catch (err) { next(err); }
 });
 
+router.get('/users/attendance', authenticate, requireRole('admin'), async (_req, res, next) => {
+  try {
+    const data = await svc.getAttendance();
+    res.json({ data });
+  } catch (err) { next(err); }
+});
+
+router.get('/users/:id/attendance', authenticate, requireRole('admin'), async (req, res, next) => {
+  try {
+    const data = await svc.getUserAttendance(req.params.id);
+    res.json({ data });
+  } catch (err) { next(err); }
+});
+
 export { router as authRouter };

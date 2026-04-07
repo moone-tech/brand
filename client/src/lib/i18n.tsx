@@ -21,6 +21,7 @@ const cs = {
   nav_moodboard: 'Mood Board',
   nav_projects: 'Projekty',
   nav_users: 'Uživatelé',
+  nav_attendance: 'Docházka',
 
   // ── Auth — login ────────────────────────────────────────────────────────────
   login_brand_workspace: 'Brand Workspace',
@@ -313,6 +314,7 @@ const en: { [K in keyof typeof cs]: string } = {
   nav_moodboard: 'Mood Board',
   nav_projects: 'Projects',
   nav_users: 'Users',
+  nav_attendance: 'Attendance',
 
   login_brand_workspace: 'Brand Workspace',
   login_email: 'Email',

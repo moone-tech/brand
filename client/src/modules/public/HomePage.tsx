@@ -31,10 +31,10 @@ export function HomePage() {
   ];
 
   return (
-    <div className="animate-fade-in space-y-20">
+    <div className="animate-fade-in space-y-16">
 
       {/* ── Hero — full-bleed image with text overlay ─────────────────────── */}
-      <section className="pt-10">
+      <section className="pt-4">
         <div
           className="relative w-full overflow-hidden rounded-2xl"
           style={{ height: 'clamp(420px, 60vw, 720px)' }}

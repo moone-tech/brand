@@ -75,6 +75,36 @@ export async function createUser(
 
 export async function updateUserLastLogin(id: UUID) {
   await db.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [id]);
+  await db.query('INSERT INTO login_log (user_id) VALUES ($1)', [id]);
+}
+
+// ---------------------------------------------------------------------------
+// Attendance
+// ---------------------------------------------------------------------------
+
+export async function getAttendanceSummary() {
+  const { rows } = await db.query(`
+    SELECT
+      u.id, u.name, u.email, u.role, u.last_login_at,
+      COUNT(ll.id) FILTER (WHERE ll.logged_in_at > NOW() - INTERVAL '30 days')         AS logins_30d,
+      COUNT(ll.id) FILTER (WHERE ll.logged_in_at > NOW() - INTERVAL '7 days')          AS logins_7d,
+      COUNT(DISTINCT DATE(ll.logged_in_at)) FILTER (WHERE ll.logged_in_at > NOW() - INTERVAL '30 days') AS active_days_30d,
+      MAX(ll.logged_in_at)                                                              AS last_seen
+    FROM users u
+    LEFT JOIN login_log ll ON ll.user_id = u.id
+    WHERE u.deleted_at IS NULL
+    GROUP BY u.id, u.name, u.email, u.role, u.last_login_at
+    ORDER BY last_seen DESC NULLS LAST
+  `);
+  return rows;
+}
+
+export async function getUserLoginHistory(userId: UUID) {
+  const { rows } = await db.query(
+    `SELECT logged_in_at FROM login_log WHERE user_id = $1 ORDER BY logged_in_at DESC LIMIT 90`,
+    [userId],
+  );
+  return rows;
 }
 
 export async function updateUserRole(id: UUID, role: UserRole) {

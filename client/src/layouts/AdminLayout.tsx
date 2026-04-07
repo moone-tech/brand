@@ -3,7 +3,7 @@
 // =============================================================================
 
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutGrid, Palette, Image, Kanban, Users, LogOut, ExternalLink } from 'lucide-react';
+import { LayoutGrid, Palette, Image, Kanban, Users, CalendarClock, LogOut, ExternalLink } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from '../lib/i18n';
 import { ThemeToggle } from '../components/ThemeToggle';
@@ -24,7 +24,8 @@ export function AdminLayout() {
   ];
 
   const ADMIN_NAV = [
-    { to: '/admin/users', label: t('nav_users'), icon: Users },
+    { to: '/admin/users',      label: t('nav_users'),      icon: Users },
+    { to: '/admin/attendance', label: t('nav_attendance'), icon: CalendarClock },
   ];
 
   function isActive(to: string, exact = false) {

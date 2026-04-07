@@ -242,3 +242,18 @@ export async function getMe(id: UUID) {
   if (!user) throw new AppError('NOT_FOUND', 'Uživatel nenalezen', 404);
   return user;
 }
+
+// ---------------------------------------------------------------------------
+// Attendance
+// ---------------------------------------------------------------------------
+
+export async function getAttendance() {
+  return q.getAttendanceSummary();
+}
+
+export async function getUserAttendance(userId: UUID) {
+  const user = await q.findUserById(userId);
+  if (!user) throw new AppError('NOT_FOUND', 'Uživatel nenalezen', 404);
+  const history = await q.getUserLoginHistory(userId);
+  return { user, history };
+}

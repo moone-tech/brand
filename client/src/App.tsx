@@ -29,6 +29,7 @@ import { CiEditorPage } from './modules/admin/ci/CiEditorPage';
 import { MoodboardPage } from './modules/admin/moodboard/MoodboardPage';
 import { ProjectsPage } from './modules/admin/projects/ProjectsPage';
 import { UsersPage } from './modules/admin/users/UsersPage';
+import { AttendancePage } from './modules/admin/attendance/AttendancePage';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -74,6 +75,14 @@ function AppRoutes() {
               element={
                 <ProtectedRoute requiredRole="admin">
                   <UsersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="attendance"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <AttendancePage />
                 </ProtectedRoute>
               }
             />
