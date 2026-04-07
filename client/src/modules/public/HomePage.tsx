@@ -1,13 +1,12 @@
 // =============================================================================
 // client/src/modules/public/HomePage.tsx — Investment memorandum landing page
-// Copy: Investiční memorandum Mo.one duben 2026
+// Hero: full-bleed brand image (Tesla-style headline → image → content).
 // Design: anchor-first — neutral palette, no decorative colour.
 // =============================================================================
 
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { useTranslation } from '../../lib/i18n';
-import { HeroIllustration } from '../../components/HeroIllustration';
 
 export function HomePage() {
   const { t } = useTranslation();
@@ -32,26 +31,24 @@ export function HomePage() {
   ];
 
   return (
-    <div className="animate-fade-in space-y-24">
+    <div className="animate-fade-in space-y-20">
 
-      {/* ── Hero ─────────────────────────────────────────────────────────────── */}
-      <section className="pt-10 pb-4">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-
-          {/* Text */}
+      {/* ── Hero text ─────────────────────────────────────────────────────────── */}
+      <section className="pt-10">
+        <p className="label-caps mb-5" style={{ color: 'var(--muted)' }}>
+          {t('home_eyebrow')}
+        </p>
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-end mb-10">
+          <h1
+            className="text-5xl md:text-6xl font-bold tracking-tight leading-tight"
+            style={{ color: 'var(--text)', letterSpacing: '-0.02em' }}
+          >
+            {t('home_hero_line1')}
+            <br />
+            {t('home_hero_line2')}
+          </h1>
           <div>
-            <p className="label-caps mb-5" style={{ color: 'var(--muted)' }}>
-              {t('home_eyebrow')}
-            </p>
-            <h1
-              className="text-5xl md:text-6xl font-bold tracking-tight leading-tight mb-5"
-              style={{ color: 'var(--text)', letterSpacing: '-0.02em' }}
-            >
-              {t('home_hero_line1')}
-              <br />
-              {t('home_hero_line2')}
-            </h1>
-            <p className="text-base max-w-md leading-relaxed mb-8" style={{ color: 'var(--muted)' }}>
+            <p className="text-base leading-relaxed mb-8" style={{ color: 'var(--muted)' }}>
               {t('home_hero_desc')}
             </p>
             <div className="flex flex-wrap gap-3">
@@ -71,17 +68,23 @@ export function HomePage() {
               </Link>
             </div>
           </div>
+        </div>
 
-          {/* Illustration */}
-          <div
-            className="relative h-72 lg:h-[420px] rounded-2xl overflow-hidden flex items-center justify-center"
-            style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
-          >
-            <div className="w-full h-full p-4">
-              <HeroIllustration />
-            </div>
-          </div>
-
+        {/* ── Full-bleed hero image ─────────────────────────────────────────── */}
+        <div
+          className="w-full overflow-hidden rounded-2xl"
+          style={{
+            height: 'clamp(300px, 52vw, 620px)',
+            border: '1px solid var(--border)',
+          }}
+        >
+          <img
+            src="/hero.png"
+            alt="Mo.one ecosystem — coffee, workspace, payments, lifestyle"
+            className="w-full h-full object-cover object-center"
+            loading="eager"
+            decoding="async"
+          />
         </div>
       </section>
 
@@ -91,11 +94,7 @@ export function HomePage() {
         style={{ borderColor: 'var(--border)', background: 'var(--border)' }}
       >
         {STATS.map(s => (
-          <div
-            key={s.label}
-            className="px-6 py-7"
-            style={{ background: 'var(--surface)' }}
-          >
+          <div key={s.label} className="px-6 py-7" style={{ background: 'var(--surface)' }}>
             <p
               className="text-3xl font-bold tracking-tight mb-1"
               style={{ color: 'var(--text)', letterSpacing: '-0.02em' }}
@@ -113,8 +112,8 @@ export function HomePage() {
       <section>
         <p className="label-caps mb-6">{t('home_exec_label')}</p>
         <p
-          className="text-base leading-relaxed max-w-3xl"
-          style={{ color: 'var(--text)', lineHeight: '1.75' }}
+          className="text-base max-w-3xl"
+          style={{ color: 'var(--text)', lineHeight: '1.8' }}
         >
           {t('home_exec_text')}
         </p>
