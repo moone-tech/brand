@@ -5,6 +5,7 @@
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useTranslation } from '../lib/i18n';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { PublicBottomNav } from '../components/PublicBottomNav';
 
 export function PublicLayout() {
   const { pathname } = useLocation();
@@ -73,17 +74,20 @@ export function PublicLayout() {
       </header>
 
       {/* Content */}
-      <main className="max-w-6xl mx-auto px-6 py-12">
+      <main className="max-w-6xl mx-auto px-6 py-12 pb-mobile-nav md:pb-12">
         <Outlet />
       </main>
 
-      {/* Footer */}
-      <footer className="border-t mt-24 py-8" style={{ borderColor: 'var(--border)' }}>
+      {/* Footer — hidden on mobile (bottom nav replaces it) */}
+      <footer className="hidden md:block border-t mt-24 py-8" style={{ borderColor: 'var(--border)' }}>
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
           <span className="text-sm font-semibold" style={{ color: 'var(--text)' }}>Mo.one</span>
           <span className="text-xs" style={{ color: 'var(--muted)' }}>© 2026 Mo.one a.s.</span>
         </div>
       </footer>
+
+      {/* Mobile bottom navigation */}
+      <PublicBottomNav />
     </div>
   );
 }

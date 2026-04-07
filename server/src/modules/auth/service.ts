@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import { randomBytes } from 'crypto';
 import { config } from '../../config';
 import { AppError } from '../../middleware/AppError';
+import { withTransaction } from '../../lib/db';
 import { sendInvitationEmail, sendPasswordResetEmail } from '../../lib/email';
 import * as q from './queries';
 import type {
@@ -146,6 +147,7 @@ export async function previewInvite(token: string): Promise<{ name: string; emai
 }
 
 export async function acceptInvite(input: RegisterFromInviteInput): Promise<AuthResponse> {
+  // Validate invitation before touching the DB transactionally
   const invitation = await q.findInvitationByToken(input.token);
   if (!invitation) throw new AppError('NOT_FOUND', 'Pozvánka nenalezena', 404);
   if (invitation.accepted_at) throw new AppError('CONFLICT', 'Pozvánka byla již použita', 409);
@@ -154,15 +156,22 @@ export async function acceptInvite(input: RegisterFromInviteInput): Promise<Auth
   }
 
   const passwordHash = await bcrypt.hash(input.password, 12);
-  const user = await q.createUser({
-    email: invitation.email,
-    name: input.name,
-    role: invitation.role as UserRole,
-    passwordHash,
-    invitedById: invitation.invited_by_id,
-  });
 
-  await q.acceptInvitation(input.token);
+  // Create user + mark invitation accepted atomically so partial state is impossible
+  const user = await withTransaction(async (client) => {
+    const newUser = await q.createUser(
+      {
+        email: invitation.email,
+        name: input.name,
+        role: invitation.role as UserRole,
+        passwordHash,
+        invitedById: invitation.invited_by_id,
+      },
+      client,
+    );
+    await q.acceptInvitation(input.token, client);
+    return newUser;
+  });
 
   const payload: JwtPayload = { id: user.id, email: user.email, role: user.role };
   const tokens = generateTokens(payload);

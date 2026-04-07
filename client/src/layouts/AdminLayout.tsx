@@ -7,6 +7,7 @@ import { LayoutGrid, Palette, Image, Kanban, Users, LogOut, ExternalLink } from 
 import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from '../lib/i18n';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { AdminBottomNav } from '../components/AdminBottomNav';
 import { cn } from '../lib/cn';
 
 export function AdminLayout() {
@@ -37,9 +38,9 @@ export function AdminLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: 'var(--background)' }}>
-      {/* Sidebar */}
+      {/* Sidebar — desktop only */}
       <aside
-        className="w-56 flex-shrink-0 flex flex-col border-r"
+        className="hidden md:flex w-56 flex-shrink-0 flex-col border-r"
         style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
       >
         {/* Logo */}
@@ -142,9 +143,14 @@ export function AdminLayout() {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto">
+      <main
+        className="flex-1 overflow-y-auto pb-mobile-nav md:pb-0"
+      >
         <Outlet />
       </main>
+
+      {/* Mobile bottom navigation */}
+      <AdminBottomNav />
     </div>
   );
 }

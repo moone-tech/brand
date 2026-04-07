@@ -3,7 +3,11 @@
 // =============================================================================
 
 import { db } from '../../lib/db';
+import { AppError } from '../../middleware/AppError';
+import type { PoolClient } from 'pg';
 import type { UUID, UserRole } from '@shared/types';
+
+type Queryable = typeof db | PoolClient;
 
 // ---------------------------------------------------------------------------
 // Users
@@ -41,20 +45,32 @@ export async function listUsers() {
   return rows;
 }
 
-export async function createUser(data: {
-  email: string;
-  name: string;
-  role: UserRole;
-  passwordHash: string;
-  invitedById: UUID | null;
-}) {
-  const { rows } = await db.query(
-    `INSERT INTO users (email, name, role, password_hash, invited_by_id)
-     VALUES ($1, $2, $3, $4, $5)
-     RETURNING id, email, name, role, avatar_url, last_login_at, invited_by_id, created_at, updated_at`,
-    [data.email, data.name, data.role, data.passwordHash, data.invitedById],
-  );
-  return rows[0];
+export async function createUser(
+  data: {
+    email: string;
+    name: string;
+    role: UserRole;
+    passwordHash: string;
+    invitedById: UUID | null;
+  },
+  qb: Queryable = db,
+) {
+  try {
+    const { rows } = await qb.query(
+      `INSERT INTO users (email, name, role, password_hash, invited_by_id)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, email, name, role, avatar_url, last_login_at, invited_by_id, created_at, updated_at`,
+      [data.email, data.name, data.role, data.passwordHash, data.invitedById],
+    );
+    return rows[0];
+  } catch (err: unknown) {
+    const pgCode = (err as { code?: string })?.code;
+    // 23505 = unique_violation (email already registered)
+    if (pgCode === '23505') throw new AppError('CONFLICT', 'Uživatel s tímto emailem již existuje', 409);
+    // 23503 = foreign_key_violation (inviter was hard-deleted)
+    if (pgCode === '23503') throw new AppError('CONFLICT', 'Pozvánka odkazuje na neexistujícího uživatele', 409);
+    throw err;
+  }
 }
 
 export async function updateUserLastLogin(id: UUID) {
@@ -100,8 +116,8 @@ export async function createInvitation(data: {
   return rows[0];
 }
 
-export async function acceptInvitation(token: string) {
-  await db.query(
+export async function acceptInvitation(token: string, qb: Queryable = db) {
+  await qb.query(
     'UPDATE invitations SET accepted_at = NOW() WHERE token = $1',
     [token],
   );
