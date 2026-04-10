@@ -15,6 +15,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { useTranslation } from '../../../lib/i18n';
 import { cn } from '../../../lib/cn';
 
+type FormOnlyType = 'image' | 'image_upload' | 'url' | 'color' | 'note';
 type ItemFormType = MoodboardItemType | 'image_upload';
 type PageTab = 'moodboard' | 'articles' | 'documents';
 
@@ -264,18 +265,12 @@ function ArticleViewer({ item, onClose, onDelete, canEdit }: {
 // Articles tab
 // ---------------------------------------------------------------------------
 
-function ArticlesTab({ boardId, canEdit }: { boardId: string; canEdit: boolean }) {
+function ArticlesTab({ boardId, items, canEdit }: { boardId: string; items: MoodboardItem[]; canEdit: boolean }) {
   const qc = useQueryClient();
   const [editorOpen, setEditorOpen] = useState(false);
   const [viewing, setViewing] = useState<MoodboardItem | null>(null);
 
-  const { data: itemsData } = useQuery({
-    queryKey: ['moodboard-items', boardId],
-    queryFn: () => api.get<{ data: MoodboardItem[] }>(`/moodboard/boards/${boardId}/items`).then(r => r.data.data),
-    enabled: !!boardId,
-  });
-
-  const articles = (itemsData ?? []).filter(it => it.type === 'article');
+  const articles = items.filter(it => it.type === 'article');
 
   const deleteItem = useMutation({
     mutationFn: (id: string) => api.delete(`/moodboard/items/${id}`),
@@ -371,20 +366,14 @@ function ArticlesTab({ boardId, canEdit }: { boardId: string; canEdit: boolean }
 // Documents tab
 // ---------------------------------------------------------------------------
 
-function DocumentsTab({ boardId, canEdit }: { boardId: string; canEdit: boolean }) {
+function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: MoodboardItem[]; canEdit: boolean }) {
   const qc = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [pdfPreview, setPdfPreview] = useState<string | null>(null);
 
-  const { data: itemsData } = useQuery({
-    queryKey: ['moodboard-items', boardId],
-    queryFn: () => api.get<{ data: MoodboardItem[] }>(`/moodboard/boards/${boardId}/items`).then(r => r.data.data),
-    enabled: !!boardId,
-  });
-
-  const docs = (itemsData ?? []).filter(it => it.type === 'document');
+  const docs = items.filter(it => it.type === 'document');
 
   const deleteItem = useMutation({
     mutationFn: (id: string) => api.delete(`/moodboard/items/${id}`),
@@ -570,7 +559,7 @@ export function MoodboardPage() {
   const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
   const [newBoardName, setNewBoardName] = useState('');
   const [showAddItem, setShowAddItem] = useState(false);
-  const [formType, setFormType] = useState<ItemFormType>('url');
+  const [formType, setFormType] = useState<FormOnlyType>('url');
   const [newItem, setNewItem] = useState<{ value: string; title: string; note: string }>({
     value: '',
     title: '',
@@ -578,7 +567,7 @@ export function MoodboardPage() {
   });
   const [uploading, setUploading] = useState(false);
 
-  const TYPE_LABELS: Record<ItemFormType, string> = {
+  const TYPE_LABELS: Record<FormOnlyType, string> = {
     image: t('moodboard_type_image'),
     image_upload: t('moodboard_type_image_upload'),
     url: t('moodboard_type_url'),
@@ -589,6 +578,7 @@ export function MoodboardPage() {
   const { data: boardsData } = useQuery({
     queryKey: ['moodboard-boards'],
     queryFn: () => api.get<{ data: MoodboardBoard[] }>('/moodboard/boards').then(r => r.data.data),
+    staleTime: 60_000,
   });
 
   const boards = boardsData ?? [];
@@ -597,10 +587,12 @@ export function MoodboardPage() {
   const { data: itemsData } = useQuery({
     queryKey: ['moodboard-items', activeBoardId],
     queryFn: () => api.get<{ data: MoodboardItem[] }>(`/moodboard/boards/${activeBoardId}/items`).then(r => r.data.data),
-    enabled: !!activeBoardId && pageTab === 'moodboard',
+    enabled: !!activeBoardId,
+    staleTime: 30_000,
   });
 
-  const items = (itemsData ?? []).filter(it => it.type !== 'article' && it.type !== 'document');
+  const allItems = itemsData ?? [];
+  const items = allItems.filter(it => it.type !== 'article' && it.type !== 'document');
 
   const createBoard = useMutation({
     mutationFn: (name: string) => api.post('/moodboard/boards', { name }),
@@ -638,7 +630,7 @@ export function MoodboardPage() {
 
   function handleSubmit() {
     if (!newItem.value) return;
-    const type: MoodboardItemType = formType === 'image_upload' ? 'image' : formType as MoodboardItemType;
+    const type: MoodboardItemType = formType === 'image_upload' ? 'image' : formType;
     createItem.mutate({ type, ...newItem });
   }
 
@@ -748,7 +740,7 @@ export function MoodboardPage() {
               <p className="font-semibold text-sm" style={{ color: 'var(--text)' }}>{t('moodboard_new_item')}</p>
 
               <div className="flex gap-2 flex-wrap">
-                {(Object.keys(TYPE_LABELS) as ItemFormType[]).map(type => (
+                {(Object.keys(TYPE_LABELS) as FormOnlyType[]).map(type => (
                   <button
                     key={type}
                     onClick={() => { setFormType(type); setNewItem(p => ({ ...p, value: '' })); }}
@@ -889,12 +881,12 @@ export function MoodboardPage() {
 
       {/* ── ARTICLES TAB ── */}
       {pageTab === 'articles' && activeBoardId && (
-        <ArticlesTab boardId={activeBoardId} canEdit={canEdit} />
+        <ArticlesTab boardId={activeBoardId} items={allItems} canEdit={canEdit} />
       )}
 
       {/* ── DOCUMENTS TAB ── */}
       {pageTab === 'documents' && activeBoardId && (
-        <DocumentsTab boardId={activeBoardId} canEdit={canEdit} />
+        <DocumentsTab boardId={activeBoardId} items={allItems} canEdit={canEdit} />
       )}
 
       {!activeBoardId && pageTab !== 'moodboard' && (
