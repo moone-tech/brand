@@ -195,6 +195,7 @@ export function ProjectsPage() {
   const { data: projectsData } = useQuery({
     queryKey: ['projects'],
     queryFn: () => api.get<{ data: Project[] }>('/projects').then(r => r.data.data),
+    placeholderData: (prev) => prev,
   });
 
   const { data: usersData } = useQuery({
@@ -214,6 +215,7 @@ export function ProjectsPage() {
     queryKey: ['tasks', activeProjectId],
     queryFn: () => api.get<{ data: Task[] }>(`/projects/${activeProjectId}/tasks`).then(r => r.data.data),
     enabled: !!activeProjectId,
+    placeholderData: (prev) => prev,
   });
 
   const tasks = tasksData ?? [];

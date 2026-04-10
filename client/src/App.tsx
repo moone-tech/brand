@@ -32,7 +32,15 @@ import { UsersPage } from './modules/admin/users/UsersPage';
 import { AttendancePage } from './modules/admin/attendance/AttendancePage';
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 5 * 60 * 1000,        // data is fresh for 5 min — no background refetch
+      gcTime: 15 * 60 * 1000,           // keep in memory for 15 min between navigations
+      refetchOnWindowFocus: false,       // don't blast the API every time user switches tabs
+      refetchOnReconnect: false,         // don't refetch on network reconnect
+    },
+  },
 });
 
 function AppRoutes() {

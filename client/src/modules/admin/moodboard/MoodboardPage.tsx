@@ -578,7 +578,6 @@ export function MoodboardPage() {
   const { data: boardsData } = useQuery({
     queryKey: ['moodboard-boards'],
     queryFn: () => api.get<{ data: MoodboardBoard[] }>('/moodboard/boards').then(r => r.data.data),
-    staleTime: 60_000,
   });
 
   const boards = boardsData ?? [];
@@ -588,7 +587,7 @@ export function MoodboardPage() {
     queryKey: ['moodboard-items', activeBoardId],
     queryFn: () => api.get<{ data: MoodboardItem[] }>(`/moodboard/boards/${activeBoardId}/items`).then(r => r.data.data),
     enabled: !!activeBoardId,
-    staleTime: 30_000,
+    placeholderData: (prev) => prev,
   });
 
   const allItems = itemsData ?? [];
