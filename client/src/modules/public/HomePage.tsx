@@ -41,10 +41,7 @@ export function HomePage() {
           Type: fluid clamp() so headline never overflows any viewport
       */}
       <section className="-mx-6 md:mx-0">
-        <div
-          className="relative w-full overflow-hidden rounded-none md:rounded-2xl"
-          style={{ height: 'clamp(500px, calc(100dvh - 56px - env(safe-area-inset-top, 0px)), 100dvh)' }}
-        >
+        <div className="hero-height relative w-full overflow-hidden rounded-none md:rounded-2xl">
           {/* Background image */}
           <img
             src="/hero.png"

@@ -212,6 +212,16 @@
   to   { width: var(--ci-target-w, 100%); }
 }
 
+/* ── Hero responsive height ─────────────────────────────────────────────────── */
+/* Mobile: edge-to-edge, fills screen below header + safe-area             */
+/* Desktop (md+): contained card height — no full-screen takeover          */
+.hero-height {
+  height: clamp(500px, calc(100dvh - 56px - env(safe-area-inset-top, 0px)), 100dvh);
+}
+@media (min-width: 768px) {
+  .hero-height { height: clamp(480px, 68vh, 720px); }
+}
+
 /* ── Article body (rich text) ───────────────────────────────────────────────── */
 .article-body h2 { font-size: 1.25rem; font-weight: 700; margin: 1.25rem 0 0.5rem; }
 .article-body h3 { font-size: 1.05rem; font-weight: 600; margin: 1rem 0 0.4rem; }
