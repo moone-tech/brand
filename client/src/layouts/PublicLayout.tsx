@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
-import { Search, X, Menu } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useTranslation } from '../lib/i18n';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { MooneLogo } from '../components/MooneLogo';
@@ -141,7 +141,12 @@ export function PublicLayout() {
               }}
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             >
-              {menuOpen ? <X size={18} /> : <Menu size={18} />}
+              {menuOpen ? <X size={18} /> : (
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <line x1="2" y1="6" x2="16" y2="6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <line x1="2" y1="12" x2="16" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              )}
             </button>
           </div>
         </div>
@@ -235,7 +240,7 @@ export function PublicLayout() {
 
       {/* Content — overflow-x:hidden so hero's -mx-6 negative margin doesn't cause scrollbar */}
       <main
-        className="max-w-6xl mx-auto px-6 pt-6 pb-12 overflow-x-hidden"
+        className="max-w-6xl mx-auto px-6 pb-12 overflow-x-hidden"
       >
         <Outlet />
       </main>

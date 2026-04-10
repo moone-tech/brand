@@ -40,7 +40,7 @@ export function HomePage() {
           Gradient: dark band top (eyebrow readable) + dark band bottom (headline readable)
           Type: fluid clamp() so headline never overflows any viewport
       */}
-      <section className="pt-4 -mx-6 md:mx-0">
+      <section className="-mx-6 md:mx-0">
         <div
           className="relative w-full overflow-hidden rounded-none md:rounded-2xl"
           style={{ height: 'clamp(500px, 88svh, 820px)' }}
