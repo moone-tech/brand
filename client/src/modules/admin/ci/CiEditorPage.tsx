@@ -14,12 +14,14 @@ import {
 } from './data'
 import { useCiStore } from './useCiStore'
 import { useTranslation } from '@/lib/i18n'
+import { ExperimentalSection } from './ExperimentalSection'
 
 type Section =
   | 'mission' | 'values' | 'positioning' | 'voice' | 'microcopy'
   | 'logo' | 'colors' | 'typography' | 'iconography'
   | 'spacing' | 'motion' | 'components' | 'imagery'
   | 'superapp' | 'entities' | 'applications'
+  | 'experimental'
 
 function copyHex(hex: string) {
   navigator.clipboard.writeText(hex).catch(() => undefined)
@@ -2249,7 +2251,8 @@ export function CiEditorPage() {
       { id: 'imagery',    name: t('ci_nav_photography') },
     ]},
     { label: t('ci_section_app'), items: [
-      { id: 'superapp',   name: t('ci_nav_superapp') },
+      { id: 'superapp',      name: t('ci_nav_superapp') },
+      { id: 'experimental',  name: '⚗️ Dashboard Lab' },
     ]},
     { label: t('ci_section_holding'), items: [
       { id: 'entities',     name: t('ci_nav_entities') },
@@ -2273,8 +2276,9 @@ export function CiEditorPage() {
     motion:       <MotionSection />,
     components:   <ComponentsSection />,
     imagery:      <ImagerySection />,
-    superapp:     <SuperAppSection />,
-    entities:     <EntitiesSection />,
+    superapp:      <SuperAppSection />,
+    experimental:  <ExperimentalSection />,
+    entities:      <EntitiesSection />,
     applications: <ApplicationsSection />,
   }
 
