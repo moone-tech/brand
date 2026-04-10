@@ -11,6 +11,7 @@ import { authRouter } from './modules/auth/routes';
 import { ciRouter } from './modules/ci/routes';
 import { moodboardRouter } from './modules/moodboard/routes';
 import { projectsRouter } from './modules/projects/routes';
+import { runMigrations } from './db/runMigrations';
 
 const app = express();
 
@@ -64,9 +65,16 @@ app.use(errorHandler);
 // Start
 // ---------------------------------------------------------------------------
 
-app.listen(config.server.port, () => {
-  logger.info(
-    { port: config.server.port, env: config.server.nodeEnv },
-    'Mo.one Brand server started',
-  );
-});
+runMigrations()
+  .then(() => {
+    app.listen(config.server.port, () => {
+      logger.info(
+        { port: config.server.port, env: config.server.nodeEnv },
+        'Mo.one Brand server started',
+      );
+    });
+  })
+  .catch(err => {
+    logger.error({ err }, 'Migrations failed — aborting server start');
+    process.exit(1);
+  });
