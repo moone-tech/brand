@@ -43,7 +43,7 @@ export function HomePage() {
       <section className="-mx-6 md:mx-0">
         <div
           className="relative w-full overflow-hidden rounded-none md:rounded-2xl"
-          style={{ height: 'clamp(500px, 88svh, 820px)' }}
+          style={{ height: 'clamp(500px, calc(100dvh - 56px - env(safe-area-inset-top, 0px)), 100dvh)' }}
         >
           {/* Background image */}
           <img
