@@ -16,10 +16,6 @@ import { runMigrations } from './db/runMigrations';
 
 const app = express();
 
-// ---------------------------------------------------------------------------
-// Middleware
-// ---------------------------------------------------------------------------
-
 app.use(cors({
   origin: (origin, cb) => {
     const allowed = [
@@ -37,51 +33,42 @@ app.use(cors({
   credentials: true,
 }));
 
-// 50 MB limit — documents are stored as base64 data URLs (adds ~33% overhead)
+// 50 MB — base64 documents add ~33% overhead over raw file size
 app.use(express.json({ limit: '50mb' }));
-
-// ---------------------------------------------------------------------------
-// Health check
-// ---------------------------------------------------------------------------
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', version: '1.0.0', service: 'moone-brand' });
 });
-
-// ---------------------------------------------------------------------------
-// Routes
-// ---------------------------------------------------------------------------
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/ci', ciRouter);
 app.use('/api/v1/moodboard', moodboardRouter);
 app.use('/api/v1/projects', projectsRouter);
 
-// ---------------------------------------------------------------------------
-// Error handler (must be last)
-// ---------------------------------------------------------------------------
-
 app.use(errorHandler);
 
 // ---------------------------------------------------------------------------
-// Startup: migrations + schema fixes
+// Bind port FIRST — Railway healthcheck must pass before any async work.
+// Migrations and schema fixes run in the background after the server is up.
 // ---------------------------------------------------------------------------
 
-async function startup() {
-  // 1. Run file-based migrations (non-fatal)
-  await runMigrations().catch(err =>
-    logger.error({ err }, 'runMigrations failed — continuing'),
-  );
+app.listen(config.server.port, () => {
+  logger.info({ port: config.server.port, env: config.server.nodeEnv }, 'Server started');
+});
 
-  // 2. Guarantee the moodboard type constraint includes article + document.
-  //    Runs every boot, is fully idempotent. Bypasses migration file tracking
-  //    so it works even if migration 008 was recorded but never fully applied.
+// ---------------------------------------------------------------------------
+// Background: fix moodboard type constraint + run file migrations
+// ---------------------------------------------------------------------------
+
+(async () => {
+  // Fix the moodboard_items CHECK constraint so 'article' and 'document' are
+  // allowed. Runs every boot, fully idempotent — safe to re-run.
   try {
+    // Drop old constraint (scans pg_constraint by definition text, not name)
     await db.query(`
       DO $$
       DECLARE r RECORD;
       BEGIN
-        -- Drop any existing type CHECK constraint that doesn't include 'article'
         FOR r IN
           SELECT conname FROM pg_constraint
           WHERE conrelid = 'moodboard_items'::regclass
@@ -91,32 +78,26 @@ async function startup() {
         LOOP
           EXECUTE format('ALTER TABLE moodboard_items DROP CONSTRAINT %I', r.conname);
         END LOOP;
-
-        -- Add updated constraint only if it doesn't already exist
-        IF NOT EXISTS (
-          SELECT 1 FROM pg_constraint
-          WHERE conrelid = 'moodboard_items'::regclass
-            AND contype = 'c'
-            AND pg_get_constraintdef(oid) LIKE '%article%'
-        ) THEN
-          ALTER TABLE moodboard_items
-            ADD CONSTRAINT moodboard_items_type_check
-              CHECK (type IN ('image', 'url', 'color', 'note', 'article', 'document'));
-        END IF;
       END$$;
     `);
-    logger.info('moodboard_items type constraint verified');
+
+    // Add new constraint — ignore "already exists" so re-runs are safe
+    await db.query(`
+      ALTER TABLE moodboard_items
+        ADD CONSTRAINT moodboard_items_type_check
+          CHECK (type IN ('image', 'url', 'color', 'note', 'article', 'document'))
+    `).catch((err: Error) => {
+      if (err.message?.includes('already exists')) return;
+      throw err;
+    });
+
+    logger.info('moodboard_items type constraint OK');
   } catch (err) {
-    logger.error({ err }, 'Type constraint fix failed — article/document saves may fail');
+    logger.error({ err }, 'Type constraint fix failed');
   }
 
-  // 3. Start listening
-  app.listen(config.server.port, () => {
-    logger.info(
-      { port: config.server.port, env: config.server.nodeEnv },
-      'Mo.one Brand server started',
-    );
-  });
-}
-
-startup();
+  // Run file-based migrations (non-fatal)
+  await runMigrations().catch(err =>
+    logger.error({ err }, 'runMigrations failed'),
+  );
+})();
