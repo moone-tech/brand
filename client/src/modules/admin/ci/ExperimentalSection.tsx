@@ -1,6 +1,6 @@
 // =============================================================================
 // ExperimentalSection.tsx — Dashboard Lab: 20 Mo.one SuperApp home-screen concepts
-// Self-contained phone chrome (re-declares shared tokens to avoid circular imports)
+// Design: Tesla / Apple / Braun — zero emoji, Lucide icons, precise typography
 // =============================================================================
 
 import { useState } from 'react'
@@ -9,6 +9,8 @@ import {
   Zap, TrendingUp, Clock, ArrowUpRight, ArrowDownLeft, Plus, Heart,
   Share2, Play, ChevronRight, Wifi, Battery, Repeat2, Gift, Sparkles,
   Car, Coffee, Utensils, Bike, Moon, Sun, BarChart2, Layers,
+  Trophy, Flame, Music2, Package, Ticket, Plane, Globe, Store,
+  Building2, Target, FileText, Users, Wallet, Send, Download,
 } from 'lucide-react'
 import { cn } from '@/lib/cn'
 
@@ -69,6 +71,16 @@ function PhoneMock({ t, children }: { t: AT; children: React.ReactNode }) {
   )
 }
 
+// ── Transaction icon helper ─────────────────────────────────────────
+
+function TxIcon({ icon: Icon, color }: { icon: React.ElementType; color: string }) {
+  return (
+    <div className={cn('w-6 h-6 rounded-lg flex items-center justify-center shrink-0', color)}>
+      <Icon size={12} className="text-white" />
+    </div>
+  )
+}
+
 // ── 20 Dashboard Screen Implementations ────────────────────────────
 
 // 01 Balance Focus
@@ -78,8 +90,14 @@ function D01({ t }: { t: AT }) {
       <SBar t={t} />
       <div className="flex-1 overflow-hidden px-4 pt-2">
         <div className="flex items-center justify-between mb-3">
-          <div><p className={cn('text-[9px]', t.muted)}>Vítej zpět</p><p className={cn('text-sm font-bold', t.text)}>Patrik Š. 👋</p></div>
-          <div className="flex gap-2 items-center"><Bell size={15} className={t.muted} /><div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">P</div></div>
+          <div>
+            <p className={cn('text-[9px]', t.muted)}>Vítej zpět</p>
+            <p className={cn('text-sm font-bold', t.text)}>Patrik Štipák</p>
+          </div>
+          <div className="flex gap-2 items-center">
+            <Bell size={15} className={t.muted} />
+            <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">P</div>
+          </div>
         </div>
         {/* Balance hero */}
         <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 p-4 mb-3">
@@ -87,8 +105,15 @@ function D01({ t }: { t: AT }) {
           <p className="text-white text-4xl font-bold tracking-tight leading-none">12 450<span className="text-2xl">,–</span></p>
           <p className="text-blue-200 text-[9px] mt-0.5">CZK · CZKT účet · Mo.one</p>
           <div className="flex gap-1.5 mt-3">
-            {['💳 Zaplatit','↑ Poslat','↓ Přijmout'].map((a, i) => (
-              <div key={i} className={cn('flex-1 py-1.5 rounded-xl text-center text-[9px] font-semibold', i===0?'bg-white text-blue-700':'bg-blue-500/50 text-white')}>{a}</div>
+            {[
+              { label: 'Zaplatit', Icon: CreditCard, primary: true },
+              { label: 'Poslat', Icon: ArrowUpRight, primary: false },
+              { label: 'Přijmout', Icon: ArrowDownLeft, primary: false },
+            ].map((a) => (
+              <div key={a.label} className={cn('flex-1 py-1.5 rounded-xl flex flex-col items-center gap-0.5', a.primary ? 'bg-white' : 'bg-blue-500/50')}>
+                <a.Icon size={10} className={a.primary ? 'text-blue-700' : 'text-white'} />
+                <span className={cn('text-[8px] font-semibold', a.primary ? 'text-blue-700' : 'text-white')}>{a.label}</span>
+              </div>
             ))}
           </div>
         </div>
@@ -96,15 +121,22 @@ function D01({ t }: { t: AT }) {
         <div className={cn('rounded-xl p-2.5 mb-3 flex items-center gap-2.5', t.surf)}>
           <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center shrink-0"><Star size={14} className="text-white" /></div>
           <div className="flex-1">
-            <div className="flex items-center justify-between mb-1"><p className={cn('text-[10px] font-semibold', t.text)}>14 250 Stardust</p><p className="text-[9px] text-green-400">+130 dnes</p></div>
+            <div className="flex items-center justify-between mb-1">
+              <p className={cn('text-[10px] font-semibold', t.text)}>14 250 Stardust</p>
+              <p className="text-[9px] text-green-400">+130 dnes</p>
+            </div>
             <div className="h-1.5 rounded-full bg-zinc-700 overflow-hidden"><div className="h-full w-3/4 rounded-full bg-green-400" /></div>
           </div>
         </div>
         {/* Transactions */}
         <p className={cn('text-[9px] font-bold uppercase tracking-widest mb-2', t.muted)}>Nedávné</p>
-        {[{n:'Santhia Coffee',e:'☕',a:'-89,–',c:'text-red-400'},{n:'Mo.one Cashback',e:'⭐',a:'+22,–',c:'text-green-400'},{n:'Festival 2027',e:'🎸',a:'-4 888,–',c:'text-red-400'}].map(tx=>(
+        {[
+          { n: 'Santhia Coffee', Icon: Coffee, color: 'bg-amber-600', a: '-89,–', c: 'text-red-400' },
+          { n: 'Mo.one Cashback', Icon: Star, color: 'bg-green-600', a: '+22,–', c: 'text-green-400' },
+          { n: 'Festival 2027', Icon: Music2, color: 'bg-violet-600', a: '-4 888,–', c: 'text-red-400' },
+        ].map(tx => (
           <div key={tx.n} className={cn('flex items-center gap-2.5 py-2 border-b last:border-0', t.bord)}>
-            <div className={cn('w-7 h-7 rounded-full flex items-center justify-center text-xs shrink-0', t.surf)}>{tx.e}</div>
+            <TxIcon icon={tx.Icon} color={tx.color} />
             <p className={cn('flex-1 text-[11px] font-medium', t.text)}>{tx.n}</p>
             <p className={cn('text-[11px] font-semibold', tx.c)}>{tx.a}</p>
           </div>
@@ -117,7 +149,14 @@ function D01({ t }: { t: AT }) {
 
 // 02 Stories Discovery
 function D02({ t }: { t: AT }) {
-  const stories = ['Mo.one','Santhia','Rock...','Halipres','Morav.','Elegán']
+  const stories = [
+    { name: 'Mo.one', img: '1556742049-0cfed4f6a45d', ring: 'ring-amber-500' },
+    { name: 'Santhia', img: '1494790108377-be9c29b29330', ring: 'ring-blue-500' },
+    { name: 'Rock...', img: '1539571696357-5a69c17a67c6', ring: 'ring-blue-500' },
+    { name: 'Halipres', img: '1507003211169-0a1dd7228f2d', ring: 'ring-blue-500' },
+    { name: 'Morav.', img: '1438761681033-6461ffad8d80', ring: 'ring-blue-500' },
+    { name: 'Elegán', img: '1534528741775-53994a69daeb', ring: 'ring-blue-500' },
+  ]
   const deals = [
     { img:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=280&h=160&fit=crop&q=70', title:'Voucher na večeři', price:'1 234,–', merchant:'Moravská kuchyně' },
     { img:'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=280&h=160&fit=crop&q=70', title:'Ranní káva s bonusem', price:'89,–', merchant:'Santhia' },
@@ -127,16 +166,22 @@ function D02({ t }: { t: AT }) {
       <SBar t={t} />
       <div className="flex items-center justify-between px-4 pt-1 pb-2 shrink-0">
         <p className={cn('text-base font-bold', t.text)}>Objevuj</p>
-        <div className="flex gap-2"><Bell size={15} className={t.muted} /><div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold">P</div></div>
+        <div className="flex gap-2">
+          <Bell size={15} className={t.muted} />
+          <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold">P</div>
+        </div>
       </div>
-      {/* Stories row */}
+      {/* Stories row — clean circles, no text ring labels */}
       <div className="flex gap-3 px-4 pb-3 overflow-x-auto shrink-0 no-scrollbar">
-        {stories.map((s, i) => (
-          <div key={s} className="flex flex-col items-center gap-1 shrink-0">
-            <div className={cn('w-12 h-12 rounded-full ring-2 p-0.5', i===0?'ring-amber-500':'ring-blue-500')}>
-              <img src={`https://images.unsplash.com/photo-${['1556742049-0cfed4f6a45d','1494790108377-be9c29b29330','1539571696357-5a69c17a67c6','1507003211169-0a1dd7228f2d','1438761681033-6461ffad8d80','1534528741775-53994a69daeb'][i]}?w=48&h=48&fit=crop&crop=faces&q=80`} className="w-full h-full rounded-full object-cover" />
+        {stories.map((s) => (
+          <div key={s.name} className="flex flex-col items-center gap-1 shrink-0">
+            <div className={cn('w-12 h-12 rounded-full ring-2 p-0.5', s.ring)}>
+              <img
+                src={`https://images.unsplash.com/photo-${s.img}?w=48&h=48&fit=crop&crop=faces&q=80`}
+                className="w-full h-full rounded-full object-cover"
+              />
             </div>
-            <p className={cn('text-[8px] font-medium', t.text)}>{s}</p>
+            <p className={cn('text-[8px] font-medium', t.text)}>{s.name}</p>
           </div>
         ))}
       </div>
@@ -164,13 +209,13 @@ function D02({ t }: { t: AT }) {
 // 03 Activity Stream
 function D03({ t }: { t: AT }) {
   const events = [
-    { type:'payment', icon:'💳', title:'Zaplaceno v Santhia', sub:'před 12 min', badge:'-89 Kč', bc:'text-red-400' },
-    { type:'reward', icon:'⭐', title:'+130 Stardust', sub:'za platbu · před 12 min', badge:'Odměna', bc:'text-amber-400' },
-    { type:'chat', icon:'💬', title:'Jana Krátká', sub:'Díky za fakturu!', badge:'', bc:'' },
-    { type:'payment', icon:'📦', title:'Zásilkovna', sub:'před 2h', badge:'-60 Kč', bc:'text-red-400' },
-    { type:'reward', icon:'🎯', title:'Streak 7 dní!', sub:'Bonus: +500 Stardust', badge:'+500', bc:'text-green-400' },
-    { type:'system', icon:'🏦', title:'CZKT limit navýšen', sub:'Nový limit: 50 000 Kč/měs', badge:'', bc:'' },
-    { type:'chat', icon:'💬', title:'Petr Novák', sub:'Posílám ti 400 Kč', badge:'↓ 400 Kč', bc:'text-green-400' },
+    { Icon: CreditCard, iconBg: 'bg-blue-600', title: 'Zaplaceno v Santhia', sub: 'před 12 min', badge: '-89 Kč', bc: 'text-red-400' },
+    { Icon: Star,       iconBg: 'bg-amber-500', title: '+130 Stardust', sub: 'za platbu · před 12 min', badge: 'Odměna', bc: 'text-amber-400' },
+    { Icon: MessageCircle, iconBg: 'bg-blue-500', title: 'Jana Krátká', sub: 'Díky za fakturu!', badge: '', bc: '' },
+    { Icon: Package,    iconBg: 'bg-gray-600',  title: 'Zásilkovna', sub: 'před 2h', badge: '-60 Kč', bc: 'text-red-400' },
+    { Icon: Target,     iconBg: 'bg-green-600', title: 'Streak 7 dní', sub: 'Bonus: +500 Stardust', badge: '+500', bc: 'text-green-400' },
+    { Icon: Building2,  iconBg: 'bg-indigo-600', title: 'CZKT limit navýšen', sub: 'Nový limit: 50 000 Kč/měs', badge: '', bc: '' },
+    { Icon: ArrowDownLeft, iconBg: 'bg-green-600', title: 'Petr Novák', sub: 'Posílá ti 400 Kč', badge: '+400 Kč', bc: 'text-green-400' },
   ]
   return (
     <div className={cn('flex flex-col h-full', t.bg)}>
@@ -182,7 +227,9 @@ function D03({ t }: { t: AT }) {
       <div className="flex-1 overflow-hidden px-4 space-y-1">
         {events.map((ev, i) => (
           <div key={i} className={cn('flex items-center gap-3 p-2.5 rounded-xl', t.surf)}>
-            <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-sm shrink-0">{ev.icon}</div>
+            <div className={cn('w-8 h-8 rounded-full flex items-center justify-center shrink-0', ev.iconBg)}>
+              <ev.Icon size={13} className="text-white" />
+            </div>
             <div className="flex-1 min-w-0">
               <p className={cn('text-[11px] font-semibold truncate', t.text)}>{ev.title}</p>
               <p className={cn('text-[9px] truncate', t.muted)}>{ev.sub}</p>
@@ -220,8 +267,11 @@ function D04({ t }: { t: AT }) {
             <p className="text-amber-400 text-base font-bold">Gold</p>
             <p className={cn('text-[9px]', t.muted)}>Úroveň</p>
           </div>
-          <div className={cn('flex-1 rounded-xl p-2.5 text-center', t.surf)}>
-            <p className={cn('text-base font-bold', t.text)}>🔥 7</p>
+          <div className={cn('flex-1 rounded-xl p-2.5 text-center flex flex-col items-center', t.surf)}>
+            <div className="flex items-center gap-1">
+              <Flame size={14} className="text-orange-400" />
+              <p className={cn('text-base font-bold', t.text)}>7</p>
+            </div>
             <p className={cn('text-[9px]', t.muted)}>Dní streak</p>
           </div>
           <div className={cn('flex-1 rounded-xl p-2.5 text-center', t.surf)}>
@@ -232,12 +282,14 @@ function D04({ t }: { t: AT }) {
         {/* Rewards */}
         <p className={cn('text-[9px] font-bold uppercase tracking-widest self-start mb-2', t.muted)}>Dostupné odměny</p>
         {[
-          { icon:'☕', name:'Káva zdarma', cost:'500 SD', pct:100 },
-          { icon:'🎫', name:'Festival sleva 10%', cost:'2 000 SD', pct:72 },
-          { icon:'✈️', name:'Business lounge', cost:'10 000 SD', pct:15 },
+          { Icon: Coffee, iconBg: 'bg-amber-600', name: 'Káva zdarma', cost: '500 SD', pct: 100 },
+          { Icon: Ticket, iconBg: 'bg-violet-600', name: 'Festival sleva 10%', cost: '2 000 SD', pct: 72 },
+          { Icon: Plane,  iconBg: 'bg-blue-600',  name: 'Business lounge', cost: '10 000 SD', pct: 15 },
         ].map(r => (
           <div key={r.name} className={cn('w-full rounded-xl p-2.5 mb-2 flex items-center gap-2.5', t.surf)}>
-            <div className="text-lg">{r.icon}</div>
+            <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', r.iconBg)}>
+              <r.Icon size={14} className="text-white" />
+            </div>
             <div className="flex-1">
               <p className={cn('text-[11px] font-semibold', t.text)}>{r.name}</p>
               <div className="h-1 rounded-full bg-zinc-700 mt-1 overflow-hidden"><div className="h-full rounded-full bg-green-400" style={{width:`${r.pct}%`}} /></div>
@@ -262,7 +314,6 @@ function D05({ t }: { t: AT }) {
   return (
     <div className={cn('flex flex-col h-full', t.bg)}>
       <SBar t={t} />
-      {/* Header */}
       <div className="px-4 pt-1 pb-2 flex items-center gap-2 shrink-0">
         <MapPin size={14} className="text-blue-500 shrink-0" />
         <p className={cn('text-sm font-bold flex-1', t.text)}>Kde platit</p>
@@ -270,23 +321,18 @@ function D05({ t }: { t: AT }) {
       </div>
       {/* Map area */}
       <div className="mx-4 rounded-2xl overflow-hidden relative mb-3" style={{height:220}}>
-        {/* Grid streets */}
         <div className={cn('absolute inset-0', t.isDark ? 'bg-zinc-800' : 'bg-gray-200')} />
-        {/* "Streets" */}
         {[40,100,160,210].map(y => <div key={y} className={cn('absolute h-[6px] left-0 right-0', t.isDark?'bg-zinc-700':'bg-gray-300')} style={{top:y}} />)}
         {[60,130,200,250].map(x => <div key={x} className={cn('absolute w-[6px] top-0 bottom-0', t.isDark?'bg-zinc-700':'bg-gray-300')} style={{left:x}} />)}
-        {/* Buildings */}
         {[{x:12,y:12,w:42,h:22},{x:66,y:12,w:55,h:32},{x:135,y:12,w:48,h:22},{x:215,y:12,w:62,h:22},{x:12,y:50,w:28,h:42},{x:12,y:115,w:35,h:35},{x:170,y:55,w:30,h:38},{x:215,y:55,w:62,h:30},{x:62,y:160,w:58,h:38},{x:215,y:110,w:62,h:50}].map((b,i)=>(
           <div key={i} className={cn('absolute rounded-sm', t.isDark?'bg-zinc-900':'bg-gray-100')} style={{left:b.x,top:b.y,width:b.w,height:b.h}} />
         ))}
-        {/* Merchant pins */}
         {pins.map(p => (
           <div key={p.label} className="absolute flex flex-col items-center" style={{left:p.x-16, top:p.y-22}}>
             <div className={cn('px-2 py-0.5 rounded-full text-white text-[8px] font-bold mb-0.5', p.color)}>{p.label}</div>
             <div className={cn('w-2 h-2 rounded-full', p.color)} />
           </div>
         ))}
-        {/* User dot */}
         <div className="absolute" style={{left:130,top:135}}>
           <div className="w-4 h-4 rounded-full bg-blue-500 ring-4 ring-blue-500/30 flex items-center justify-center">
             <div className="w-2 h-2 rounded-full bg-white" />
@@ -328,11 +374,9 @@ function D06({ t }: { t: AT }) {
           <Plus size={16} className="text-blue-500" />
         </div>
       </div>
-      {/* Search */}
       <div className={cn('mx-4 mb-2 px-3 py-1.5 rounded-xl flex items-center gap-2 shrink-0', t.surf)}>
         <p className={cn('text-[11px]', t.muted)}>Hledat konverzace…</p>
       </div>
-      {/* Chat list */}
       <div className="flex-1 overflow-hidden">
         {chats.map(c => (
           <div key={c.n} className={cn('flex items-center gap-3 px-4 py-2.5 border-b', t.bord)}>
@@ -366,7 +410,7 @@ function D07({ t }: { t: AT }) {
             <p className={cn('text-[10px] font-semibold', t.muted)}>Mo.one AI · právě teď</p>
           </div>
           <div className={cn('rounded-2xl rounded-tl-sm p-3', t.surf)}>
-            <p className={cn('text-[12px] font-semibold mb-1', t.text)}>Dobré ráno, Patrik! ☀️</p>
+            <p className={cn('text-[12px] font-semibold mb-1', t.text)}>Dobré ráno, Patrik</p>
             <p className={cn('text-[11px] leading-relaxed', t.muted)}>Tento týden jsi utratil <span className="text-white font-semibold">3 200 Kč</span> — o 15 % méně než minulý. Santhia tě čeká s <span className="text-green-400 font-semibold">+50 Stardust bonusem</span>.</p>
           </div>
         </div>
@@ -389,8 +433,10 @@ function D07({ t }: { t: AT }) {
           <div className="flex gap-1 ml-auto"><div className="px-2 py-0.5 rounded-full bg-blue-600 text-white text-[9px] font-bold">Přijmout</div></div>
         </div>
         <div className={cn('rounded-xl p-3 flex items-center gap-3', t.surf)}>
-          <Star size={16} className="text-amber-400 shrink-0" />
-          <div><p className={cn('text-[11px] font-semibold', t.text)}>Streak: 7 dní 🔥</p><p className={cn('text-[9px]', t.muted)}>Zítra: dvojnásobné body</p></div>
+          <div className="flex items-center gap-1">
+            <Star size={16} className="text-amber-400 shrink-0" />
+          </div>
+          <div><p className={cn('text-[11px] font-semibold', t.text)}>Streak: 7 dní</p><p className={cn('text-[9px]', t.muted)}>Zítra: dvojnásobné body</p></div>
           <ChevronRight size={12} className={t.muted} />
         </div>
       </div>
@@ -425,7 +471,6 @@ function D08({ t }: { t: AT }) {
           <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold">P</div>
         </div>
       </div>
-      {/* App grid */}
       <div className="flex-1 overflow-hidden px-4 pt-1">
         <div className="grid grid-cols-4 gap-3">
           {apps.map(({ icon: Icon, label, color }) => (
@@ -435,12 +480,12 @@ function D08({ t }: { t: AT }) {
             </div>
           ))}
         </div>
-        {/* Balance & recent strip */}
         <div className={cn('mt-4 rounded-xl p-3', t.surf)}>
           <p className={cn('text-[9px] font-bold uppercase tracking-widest mb-2', t.muted)}>Poslední platby</p>
-          {[{n:'Santhia',a:'-89 Kč'},{n:'Mo.one Cashback',a:'+22 Kč'}].map(tx=>(
-            <div key={tx.n} className="flex justify-between py-1.5">
-              <p className={cn('text-[11px]', t.text)}>{tx.n}</p>
+          {[{n:'Santhia',a:'-89 Kč', Icon: Coffee, bg:'bg-amber-600'},{n:'Mo.one Cashback',a:'+22 Kč', Icon: Star, bg:'bg-green-600'}].map(tx=>(
+            <div key={tx.n} className="flex items-center gap-2 py-1.5">
+              <TxIcon icon={tx.Icon} color={tx.bg} />
+              <p className={cn('flex-1 text-[11px]', t.text)}>{tx.n}</p>
               <p className={cn('text-[11px] font-semibold', tx.a[0]==='-'?'text-red-400':'text-green-400')}>{tx.a}</p>
             </div>
           ))}
@@ -460,17 +505,13 @@ function D09({ t }: { t: AT }) {
         <p className={cn('text-base font-bold', t.text)}>Peněženka</p>
         <p className={cn('text-[10px]', t.muted)}>3 karty</p>
       </div>
-      {/* Card stack */}
       <div className="flex-1 overflow-hidden relative px-4 pt-2">
-        {/* Card 3 (back) */}
         <div className="absolute inset-x-4 rounded-2xl bg-zinc-600 shadow-lg" style={{top:72, height:170}}>
           <div className="p-4"><p className="text-zinc-300 text-[9px]">Bankovní karta</p><p className="text-white font-bold text-sm">Monobank CZK</p></div>
         </div>
-        {/* Card 2 */}
         <div className="absolute inset-x-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 shadow-xl" style={{top:36, height:170}}>
           <div className="p-4"><p className="text-indigo-200 text-[9px]">EMV karta · Mo.one</p><p className="text-white font-bold text-sm">CZKT Limited</p></div>
         </div>
-        {/* Card 1 (front) */}
         <div className="absolute inset-x-4 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-2xl" style={{top:0, height:170}}>
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
@@ -483,13 +524,14 @@ function D09({ t }: { t: AT }) {
               <div><p className="text-blue-200 text-[8px]">ZŮSTATEK</p><p className="text-white text-[12px] font-bold">12 450,–</p></div>
             </div>
           </div>
-          {/* NFC icon */}
           <div className="absolute bottom-3 right-4"><Repeat2 size={20} className="text-blue-200 opacity-60" /></div>
         </div>
-        {/* Below cards */}
         <div className="absolute inset-x-4" style={{top:185}}>
           <div className="flex gap-2 mt-3">
-            <div className="flex-1 bg-blue-600 rounded-xl py-2.5 text-center"><p className="text-white text-[11px] font-bold">💳 Zaplatit (NFC)</p></div>
+            <div className="flex-1 bg-blue-600 rounded-xl py-2.5 flex items-center justify-center gap-1.5">
+              <CreditCard size={12} className="text-white" />
+              <p className="text-white text-[11px] font-bold">Zaplatit NFC</p>
+            </div>
             <div className={cn('flex-1 rounded-xl py-2.5 text-center', t.surf)}><p className={cn('text-[11px] font-semibold', t.text)}>+ Přidat kartu</p></div>
           </div>
           <div className={cn('mt-3 rounded-xl p-2.5 flex items-center gap-2', t.surf)}>
@@ -497,11 +539,13 @@ function D09({ t }: { t: AT }) {
             <p className={cn('flex-1 text-[10px] font-medium', t.text)}>14 250 Stardust · Gold tier</p>
             <p className="text-green-400 text-[9px] font-bold">2.4%</p>
           </div>
-          {/* Transactions */}
           <p className={cn('text-[9px] font-bold uppercase tracking-widest mt-3 mb-1', t.muted)}>Nedávné</p>
-          {[{n:'Santhia',a:'-89 Kč',e:'☕'},{n:'Cashback',a:'+22 Kč',e:'⭐'}].map(tx=>(
+          {[
+            {n:'Santhia', a:'-89 Kč', Icon: Coffee, bg:'bg-amber-600'},
+            {n:'Cashback', a:'+22 Kč', Icon: Star, bg:'bg-green-600'},
+          ].map(tx=>(
             <div key={tx.n} className="flex items-center gap-2 py-1.5">
-              <span className="text-sm">{tx.e}</span>
+              <TxIcon icon={tx.Icon} color={tx.bg} />
               <p className={cn('flex-1 text-[11px]', t.text)}>{tx.n}</p>
               <p className={cn('text-[11px] font-semibold', tx.a[0]==='-'?'text-red-400':'text-green-400')}>{tx.a}</p>
             </div>
@@ -513,17 +557,17 @@ function D09({ t }: { t: AT }) {
   )
 }
 
-// 10 Merchant Reel (TikTok/Reels commerce)
-function D10({ t }: { t: AT }) {
+// 10 Merchant Reel (TikTok/Reels commerce) — TRULY FULL-SCREEN, no BNav
+function D10({ t: _t }: { t: AT }) {
   return (
     <div className="flex flex-col h-full relative bg-black">
-      {/* Full-bleed merchant image */}
+      {/* Full-bleed merchant image — fills entire 640px, no nav */}
       <img
         src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=640&h=1136&fit=crop&q=85"
         className="absolute inset-0 w-full h-full object-cover"
       />
-      {/* Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
+      {/* Gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/90" />
       {/* Status bar */}
       <div className="relative flex items-center justify-between px-5 shrink-0 z-10" style={{ height: 44, paddingTop: 12 }}>
         <span className="text-[11px] font-semibold text-white">9:41</span>
@@ -536,7 +580,7 @@ function D10({ t }: { t: AT }) {
         <div className="flex gap-3"><ShoppingBag size={16} className="text-white" /><Bell size={16} className="text-white" /></div>
       </div>
       {/* Right actions */}
-      <div className="absolute right-3 bottom-32 z-10 flex flex-col items-center gap-4">
+      <div className="absolute right-3 z-10 flex flex-col items-center gap-4" style={{ bottom: 120 }}>
         {[{I:Heart,l:'248'},{I:Share2,l:'Sdílet'},{I:CreditCard,l:'Koupit'}].map(({I,l})=>(
           <div key={l} className="flex flex-col items-center gap-1">
             <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur flex items-center justify-center"><I size={18} className="text-white" /></div>
@@ -544,14 +588,14 @@ function D10({ t }: { t: AT }) {
           </div>
         ))}
       </div>
-      {/* Bottom info */}
-      <div className="absolute bottom-14 left-0 right-12 px-4 z-10">
+      {/* Bottom info — no nav, content goes to bottom of screen */}
+      <div className="absolute left-0 right-12 px-4 z-10" style={{ bottom: 32 }}>
         <div className="flex items-center gap-2 mb-1">
           <div className="w-7 h-7 rounded-full ring-2 ring-white overflow-hidden"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=28&h=28&fit=crop&crop=faces&q=80" className="w-full h-full object-cover" /></div>
           <p className="text-white text-[11px] font-semibold">Moravská kuchyně</p>
           <div className="bg-blue-600 px-2 py-0.5 rounded-full"><p className="text-white text-[9px] font-bold">Sledovat</p></div>
         </div>
-        <p className="text-white text-xs font-semibold mb-0.5">Voucher na večeři pro dva 🍷</p>
+        <p className="text-white text-xs font-semibold mb-0.5">Voucher na večeři pro dva</p>
         <p className="text-white/80 text-[10px]">Špičkový výběr vín a precizní kuchyně...</p>
         <div className="flex items-center gap-2 mt-2">
           <div className="bg-blue-600 px-4 py-1.5 rounded-xl"><p className="text-white text-[10px] font-bold">Koupit · 1 234,–</p></div>
@@ -561,21 +605,21 @@ function D10({ t }: { t: AT }) {
           </div>
         </div>
       </div>
-      {/* Nav */}
-      <div className="absolute bottom-0 left-0 right-0 z-10">
-        <BNav t={DARK} act="home" />
-      </div>
     </div>
   )
 }
 
 // 11 Morning Brief (Newspaper)
 function D11({ t }: { t: AT }) {
+  const agenda = [
+    { Icon: Coffee,  iconBg: 'bg-amber-600', title: 'Santhia +50 SD bonus', sub: 'Ráno · platnost do 11:00', color: 'text-amber-400' },
+    { Icon: Music2,  iconBg: 'bg-violet-600', title: 'Festival 2027 — Early Bird', sub: 'Poslední tickets za 4 888 Kč', color: 'text-blue-400' },
+    { Icon: Send,    iconBg: 'bg-green-600',  title: 'Petr: 400 Kč k vyrovnání', sub: 'Čeká na tvoje přijetí', color: 'text-green-400' },
+  ]
   return (
     <div className={cn('flex flex-col h-full', t.bg)}>
       <SBar t={t} />
       <div className="flex-1 overflow-hidden px-4 pt-2">
-        {/* Date header */}
         <div className="flex items-center justify-between mb-3">
           <div>
             <p className={cn('text-[10px] uppercase tracking-widest', t.muted)}>Sobota · 10. dubna 2026</p>
@@ -607,13 +651,11 @@ function D11({ t }: { t: AT }) {
         </div>
         {/* Today agenda */}
         <p className={cn('text-[9px] font-bold uppercase tracking-widest mb-2', t.muted)}>Dnes tě čeká</p>
-        {[
-          { icon:'☕', title:'Santhia +50 SD bonus', sub:'Ráno · platnost do 11:00', color:'text-amber-400' },
-          { icon:'🎸', title:'Festival 2027 — Early Bird', sub:'Poslední tickets za 4 888 Kč', color:'text-blue-400' },
-          { icon:'💸', title:'Petr: 400 Kč k vyrovnání', sub:'Čeká na tvoje přijetí', color:'text-green-400' },
-        ].map(ev => (
+        {agenda.map(ev => (
           <div key={ev.title} className={cn('flex items-center gap-3 p-2.5 rounded-xl mb-2', t.surf)}>
-            <span className="text-lg">{ev.icon}</span>
+            <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center shrink-0', ev.iconBg)}>
+              <ev.Icon size={13} className="text-white" />
+            </div>
             <div className="flex-1">
               <p className={cn('text-[11px] font-semibold', t.text)}>{ev.title}</p>
               <p className={cn('text-[9px]', t.muted)}>{ev.sub}</p>
@@ -652,7 +694,6 @@ function D12({ t }: { t: AT }) {
         <p className={cn('text-[10px]', t.muted)}>1. – 10. dubna 2026</p>
       </div>
       <div className="flex items-center gap-4 px-4 mb-3 shrink-0">
-        {/* Donut */}
         <svg width={160} height={160} viewBox="0 0 160 160" className="shrink-0">
           {cats.map((c, i) => {
             const dash = (c.pct / 100) * circ
@@ -664,7 +705,6 @@ function D12({ t }: { t: AT }) {
           <text x={cx} y={cy - 6} textAnchor="middle" fill={t.isDark ? '#fff' : '#111'} fontSize="14" fontWeight="700">{(total/1000).toFixed(1)}k</text>
           <text x={cx} y={cy + 10} textAnchor="middle" fill={t.isDark ? '#999' : '#666'} fontSize="9">Kč celkem</text>
         </svg>
-        {/* Legend */}
         <div className="flex flex-col gap-1.5 flex-1">
           {cats.map(c => (
             <div key={c.label} className="flex items-center gap-2">
@@ -675,7 +715,6 @@ function D12({ t }: { t: AT }) {
           ))}
         </div>
       </div>
-      {/* Category breakdown */}
       <div className="flex-1 overflow-hidden px-4 space-y-1.5">
         {cats.map(c => (
           <div key={c.label} className={cn('rounded-xl p-2.5 flex items-center gap-2.5', t.surf)}>
@@ -699,11 +738,15 @@ function D12({ t }: { t: AT }) {
 
 // 13 Context Aware (Evening mode)
 function D13({ t }: { t: AT }) {
+  const nearby = [
+    { Icon: Utensils, iconBg: 'bg-rose-600', title: 'Pizza Napoletana', sub: '350m · Sleva 15% s Mo.one', tag: 'Jídlo', tcolor: 'bg-rose-600' },
+    { Icon: Music2,   iconBg: 'bg-amber-600', title: 'Craft Beer Bar', sub: '200m · Happy hour do 20:00', tag: 'Zábava', tcolor: 'bg-amber-600' },
+    { Icon: Store,    iconBg: 'bg-blue-600',  title: 'Albert 24h', sub: '120m · +10 SD za nákup', tag: 'Shop', tcolor: 'bg-blue-600' },
+  ]
   return (
     <div className={cn('flex flex-col h-full', t.bg)}>
       <SBar t={t} />
       <div className="flex-1 overflow-hidden px-4 pt-2">
-        {/* Time context badge */}
         <div className={cn('flex items-center gap-2 px-3 py-1.5 rounded-full self-start mb-3', t.surf)} style={{display:'inline-flex'}}>
           <Moon size={11} className="text-indigo-400" />
           <p className={cn('text-[10px] font-semibold', t.muted)}>Večer · 18:12 · Praha 5</p>
@@ -711,21 +754,22 @@ function D13({ t }: { t: AT }) {
         {/* Hero context card */}
         <div className="rounded-2xl bg-gradient-to-br from-indigo-900 to-zinc-900 p-4 mb-3 border border-indigo-700/40">
           <p className="text-indigo-300 text-[10px] mb-1">Jak se ti daří cestou domů?</p>
-          <p className="text-white text-lg font-bold leading-snug mb-3">Objednat taxi<br />na 1 klik? 🚕</p>
+          <div className="flex items-center gap-2 mb-3">
+            <Car size={20} className="text-orange-400" />
+            <p className="text-white text-lg font-bold leading-snug">Objednat taxi na 1 klik</p>
+          </div>
           <div className="flex gap-2">
-            <div className="flex-1 bg-blue-600 rounded-xl py-2 text-center"><p className="text-white text-[11px] font-bold">✓ Potvrdit cestu</p></div>
+            <div className="flex-1 bg-blue-600 rounded-xl py-2 text-center"><p className="text-white text-[11px] font-bold">Potvrdit cestu</p></div>
             <div className={cn('flex-1 rounded-xl py-2 text-center', t.surf)}><p className={cn('text-[11px]', t.muted)}>Zrušit</p></div>
           </div>
         </div>
         {/* Contextual suggestions */}
         <p className={cn('text-[9px] font-bold uppercase tracking-widest mb-2', t.muted)}>Právě teď v okolí</p>
-        {[
-          { icon:'🍕', title:'Pizza Napoletana', sub:'350m · Sleva 15% s Mo.one', tag:'Jídlo', tcolor:'bg-rose-600' },
-          { icon:'🍺', title:'Craft Beer Bar', sub:'200m · Happy hour do 20:00', tag:'Zábava', tcolor:'bg-amber-600' },
-          { icon:'🏪', title:'Albert 24h', sub:'120m · +10 SD za nákup', tag:'Shop', tcolor:'bg-blue-600' },
-        ].map(s => (
+        {nearby.map(s => (
           <div key={s.title} className={cn('flex items-center gap-3 p-2.5 rounded-xl mb-2', t.surf)}>
-            <span className="text-xl">{s.icon}</span>
+            <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center shrink-0', s.iconBg)}>
+              <s.Icon size={13} className="text-white" />
+            </div>
             <div className="flex-1">
               <p className={cn('text-[11px] font-semibold', t.text)}>{s.title}</p>
               <p className={cn('text-[9px]', t.muted)}>{s.sub}</p>
@@ -755,18 +799,16 @@ function D14({ t }: { t: AT }) {
         <div className="flex gap-2"><Bell size={15} className={t.muted} /><div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold">P</div></div>
       </div>
       <div className="flex-1 overflow-hidden px-4 space-y-2">
-        {/* Wide balance widget */}
         <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 p-3 flex items-center gap-3">
           <div className="flex-1">
             <p className="text-blue-200 text-[9px]">Zůstatek · CZKT</p>
             <p className="text-white text-2xl font-bold tracking-tight">12 450<span className="text-base">,–</span></p>
           </div>
           <div className="flex flex-col gap-1.5">
-            <div className="bg-white/20 rounded-lg px-2.5 py-1 text-center"><p className="text-white text-[9px] font-bold">↑ Poslat</p></div>
-            <div className="bg-white/20 rounded-lg px-2.5 py-1 text-center"><p className="text-white text-[9px] font-bold">↓ Přijmout</p></div>
+            <div className="bg-white/20 rounded-lg px-2.5 py-1 text-center"><p className="text-white text-[9px] font-bold">Poslat</p></div>
+            <div className="bg-white/20 rounded-lg px-2.5 py-1 text-center"><p className="text-white text-[9px] font-bold">Přijmout</p></div>
           </div>
         </div>
-        {/* 2-col row */}
         <div className="flex gap-2">
           <div className={cn('flex-1 rounded-2xl p-3', t.surf)}>
             <div className="flex items-center gap-1.5 mb-1"><Star size={12} className="text-amber-400" /><p className={cn('text-[9px] font-semibold', t.muted)}>Stardust</p></div>
@@ -781,7 +823,6 @@ function D14({ t }: { t: AT }) {
             <p className={cn('text-[9px] mt-0.5', t.muted)}>sazba 2.4%</p>
           </div>
         </div>
-        {/* Chat widget */}
         <div className={cn('rounded-2xl p-3 flex items-center gap-3', t.surf)}>
           <MessageCircle size={16} className="text-blue-500 shrink-0" />
           <div className="flex-1">
@@ -790,7 +831,6 @@ function D14({ t }: { t: AT }) {
           </div>
           <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center"><p className="text-white text-[8px] font-bold">1</p></div>
         </div>
-        {/* Nearby widget */}
         <div className={cn('rounded-2xl p-3 flex items-center gap-3', t.surf)}>
           <div className="w-8 h-8 rounded-full bg-teal-600/20 flex items-center justify-center shrink-0"><MapPin size={14} className="text-teal-400" /></div>
           <div className="flex-1">
@@ -799,11 +839,11 @@ function D14({ t }: { t: AT }) {
           </div>
           <div className="bg-blue-600 px-2 py-1 rounded-lg"><p className="text-white text-[9px] font-bold">Platit</p></div>
         </div>
-        {/* Quick pay strip */}
         <div className="flex gap-2">
-          {['💳 NFC','📱 QR','👤 Kontakt'].map(a => (
-            <div key={a} className={cn('flex-1 rounded-xl py-2 text-center', t.surf)}>
-              <p className={cn('text-[9px] font-semibold', t.text)}>{a}</p>
+          {[{Icon: CreditCard, label:'NFC'},{Icon: Play, label:'QR'},{Icon: User, label:'Kontakt'}].map(a => (
+            <div key={a.label} className={cn('flex-1 rounded-xl py-2 flex flex-col items-center gap-0.5', t.surf)}>
+              <a.Icon size={12} className={t.muted} />
+              <p className={cn('text-[9px] font-semibold', t.text)}>{a.label}</p>
             </div>
           ))}
         </div>
@@ -823,7 +863,6 @@ function D15({ t }: { t: AT }) {
         <div className="flex gap-2"><Bell size={15} className={t.muted} /><Plus size={15} className="text-blue-500" /></div>
       </div>
       <div className="flex-1 overflow-hidden px-4 space-y-2">
-        {/* Pending requests */}
         <p className={cn('text-[9px] font-bold uppercase tracking-widest', t.muted)}>Čeká na tebe</p>
         {[
           { name:'Petr Novák', action:'posílá ti', amt:'+400 Kč', img:'1507003211169-0a1dd7228f2d', accept:true },
@@ -836,16 +875,18 @@ function D15({ t }: { t: AT }) {
               <p className={cn('text-base font-bold', r.amt[0]==='+' ? 'text-green-400' : 'text-red-400')}>{r.amt}</p>
             </div>
             <div className="flex gap-2">
-              <div className="flex-1 bg-blue-600 rounded-lg py-1.5 text-center"><p className="text-white text-[10px] font-bold">✓ Přijmout</p></div>
+              <div className="flex-1 bg-blue-600 rounded-lg py-1.5 text-center"><p className="text-white text-[10px] font-bold">Přijmout</p></div>
               <div className={cn('flex-1 rounded-lg py-1.5 text-center', t.isDark?'bg-zinc-800':'bg-gray-100')}><p className={cn('text-[10px]', t.muted)}>Odmítnout</p></div>
             </div>
           </div>
         ))}
-        {/* Group fund */}
         <p className={cn('text-[9px] font-bold uppercase tracking-widest', t.muted)}>Skupinový fond</p>
         <div className={cn('rounded-xl p-3', t.surf)}>
           <div className="flex items-center justify-between mb-2">
-            <p className={cn('text-[11px] font-semibold', t.text)}>🎉 Narozeniny Jana</p>
+            <div className="flex items-center gap-1.5">
+              <Trophy size={13} className="text-amber-400" />
+              <p className={cn('text-[11px] font-semibold', t.text)}>Narozeniny Jana</p>
+            </div>
             <p className="text-green-400 text-[11px] font-bold">1 200 / 2 000 Kč</p>
           </div>
           <div className={cn('h-2 rounded-full overflow-hidden', t.isDark?'bg-zinc-800':'bg-gray-200')}>
@@ -856,7 +897,6 @@ function D15({ t }: { t: AT }) {
             <div className="bg-blue-600 px-2.5 py-1 rounded-lg"><p className="text-white text-[9px] font-bold">+ Přispět</p></div>
           </div>
         </div>
-        {/* Activity */}
         <p className={cn('text-[9px] font-bold uppercase tracking-widest', t.muted)}>Přátelé platili</p>
         {[{n:'Nikola J.',a:'zaplatila v Santhia',time:'před 30 min'},{n:'Jan K.',a:'přispěl 300 Kč Janovi',time:'1h'}].map(a=>(
           <div key={a.n} className="flex items-center gap-2 py-1">
@@ -873,6 +913,11 @@ function D15({ t }: { t: AT }) {
 
 // 16 Reward Engine
 function D16({ t }: { t: AT }) {
+  const opportunities = [
+    { Icon: Coffee, iconBg: 'bg-amber-600', name: 'Santhia', bonus: '2× Stardust', expiry: 'do 11:00', active: true },
+    { Icon: Store,  iconBg: 'bg-blue-600',  name: 'Albert', bonus: '+100 SD', expiry: 'do 22:00', active: true },
+    { Icon: Music2, iconBg: 'bg-violet-600', name: 'Festival 2027', bonus: '+500 SD', expiry: '24h', active: false },
+  ]
   return (
     <div className={cn('flex flex-col h-full', t.bg)}>
       <SBar t={t} />
@@ -892,7 +937,10 @@ function D16({ t }: { t: AT }) {
         {/* Tier progress */}
         <div className={cn('rounded-xl p-3 mb-3', t.surf)}>
           <div className="flex items-center justify-between mb-2">
-            <p className={cn('text-[11px] font-semibold', t.text)}>🥇 Gold → Platinum</p>
+            <div className="flex items-center gap-1.5">
+              <Trophy size={13} className="text-amber-400" />
+              <p className={cn('text-[11px] font-semibold', t.text)}>Gold → Platinum</p>
+            </div>
             <p className={cn('text-[9px]', t.muted)}>35 750 / 50 000 SD</p>
           </div>
           <div className={cn('h-2 rounded-full overflow-hidden', t.isDark?'bg-zinc-800':'bg-gray-200')}>
@@ -902,13 +950,11 @@ function D16({ t }: { t: AT }) {
         </div>
         {/* Earn opportunities */}
         <p className={cn('text-[9px] font-bold uppercase tracking-widest mb-2', t.muted)}>Vydělej víc dnes</p>
-        {[
-          { icon:'☕', name:'Santhia', bonus:'2× Stardust', expiry:'do 11:00', active:true },
-          { icon:'🛒', name:'Albert', bonus:'+100 SD', expiry:'do 22:00', active:true },
-          { icon:'🎸', name:'Festival 2027', bonus:'+500 SD', expiry:'24h', active:false },
-        ].map(op => (
+        {opportunities.map(op => (
           <div key={op.name} className={cn('flex items-center gap-3 p-2.5 rounded-xl mb-2', t.surf)}>
-            <span className="text-xl">{op.icon}</span>
+            <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', op.iconBg)}>
+              <op.Icon size={14} className="text-white" />
+            </div>
             <div className="flex-1">
               <p className={cn('text-[11px] font-semibold', t.text)}>{op.name}</p>
               <p className="text-green-400 text-[9px] font-semibold">{op.bonus}</p>
@@ -928,12 +974,10 @@ function D17({ t }: { t: AT }) {
     <div className={cn('flex flex-col h-full font-mono', t.bg)}>
       <SBar t={t} />
       <div className="flex-1 overflow-hidden px-3 pt-2 space-y-1.5 text-[10px]">
-        {/* Header row */}
         <div className="flex items-center justify-between border-b pb-1.5" style={{borderColor:'#27272a'}}>
           <p className="text-blue-400 font-bold text-[11px]">MO.ONE ▸ DASHBOARD</p>
           <p className={t.muted}>10 APR 2026 · 09:41</p>
         </div>
-        {/* Balance row */}
         <div className={cn('rounded-lg p-2.5', t.surf)}>
           <div className="flex items-center justify-between">
             <p className={t.muted}>CZKT_BALANCE</p>
@@ -945,7 +989,6 @@ function D17({ t }: { t: AT }) {
             <span className="text-amber-400">★ SD: 14 250</span>
           </div>
         </div>
-        {/* Mini sparkline */}
         <div className={cn('rounded-lg p-2.5', t.surf)}>
           <p className={cn('mb-1.5', t.muted)}>SPEND_7D (Kč)</p>
           <div className="flex items-end gap-1 h-8">
@@ -957,7 +1000,6 @@ function D17({ t }: { t: AT }) {
             {['Po','Út','St','Čt','Pá','So','Ne'].map(d=><span key={d} className={cn('flex-1 text-center text-[7px]', t.muted)}>{d}</span>)}
           </div>
         </div>
-        {/* Txn log */}
         <div className={cn('rounded-lg p-2', t.surf)}>
           <p className={cn('mb-1', t.muted)}>RECENT_TXN</p>
           {[
@@ -973,18 +1015,20 @@ function D17({ t }: { t: AT }) {
             </div>
           ))}
         </div>
-        {/* Status grid */}
         <div className="grid grid-cols-3 gap-1.5">
           {[
-            {k:'STREAK',v:'7d 🔥',c:'text-amber-400'},
-            {k:'CASHBACK',v:'2.4%',c:'text-green-400'},
-            {k:'TIER',v:'GOLD',c:'text-yellow-400'},
-            {k:'CHATS',v:'3 unrd',c:'text-blue-400'},
-            {k:'NFC',v:'READY',c:'text-green-400'},
-            {k:'LIMIT',v:'50k/m',c:t.muted},
+            {k:'STREAK', v:'7d', Icon: Flame, c:'text-amber-400'},
+            {k:'CASHBACK',v:'2.4%', Icon: TrendingUp, c:'text-green-400'},
+            {k:'TIER',   v:'GOLD', Icon: Trophy, c:'text-yellow-400'},
+            {k:'CHATS',  v:'3 unrd', Icon: MessageCircle, c:'text-blue-400'},
+            {k:'NFC',    v:'READY', Icon: CreditCard, c:'text-green-400'},
+            {k:'LIMIT',  v:'50k/m', Icon: Building2, c:t.muted},
           ].map(s => (
             <div key={s.k} className={cn('rounded-lg p-2', t.surf)}>
-              <p className={cn('text-[7px] mb-0.5', t.sub)}>{s.k}</p>
+              <div className="flex items-center gap-1 mb-0.5">
+                <s.Icon size={8} className={s.c} />
+                <p className={cn('text-[7px]', t.sub)}>{s.k}</p>
+              </div>
               <p className={cn('text-[11px] font-bold', s.c)}>{s.v}</p>
             </div>
           ))}
@@ -1004,7 +1048,6 @@ function D18({ t }: { t: AT }) {
         <p className={cn('text-[11px] tracking-widest uppercase', t.muted)}>Zůstatek</p>
         <p className={cn('text-5xl font-black tracking-tight', t.text)}>12 450<span className="text-3xl font-bold">,–</span></p>
         <p className={cn('text-[11px]', t.muted)}>CZK · CZKT · Mo.one</p>
-        {/* One giant button */}
         <div className="w-44 h-44 rounded-full bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-500/40 mt-2 cursor-pointer active:scale-95 transition-transform">
           <div className="text-center">
             <CreditCard size={32} className="text-white mx-auto mb-2" />
@@ -1012,11 +1055,19 @@ function D18({ t }: { t: AT }) {
             <p className="text-blue-200 text-[10px] mt-0.5">NFC · QR · Kontakt</p>
           </div>
         </div>
-        {/* Minimal links */}
         <div className="flex gap-6 mt-2">
-          <p className={cn('text-[11px]', t.muted)}>↑ Poslat</p>
-          <p className={cn('text-[11px]', t.muted)}>↓ Přijmout</p>
-          <p className={cn('text-[11px]', t.muted)}>⭐ 14 250</p>
+          <div className="flex items-center gap-1">
+            <ArrowUpRight size={12} className={t.muted} />
+            <p className={cn('text-[11px]', t.muted)}>Poslat</p>
+          </div>
+          <div className="flex items-center gap-1">
+            <ArrowDownLeft size={12} className={t.muted} />
+            <p className={cn('text-[11px]', t.muted)}>Přijmout</p>
+          </div>
+          <div className="flex items-center gap-1">
+            <Star size={12} className="text-amber-400" />
+            <p className={cn('text-[11px]', t.muted)}>14 250</p>
+          </div>
         </div>
       </div>
       <BNav t={t} />
@@ -1062,7 +1113,7 @@ function D19({ t }: { t: AT }) {
         {/* Delivery tracking */}
         <div className={cn('rounded-2xl p-3 border-l-2 border-blue-500', t.surf)}>
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center"><ShoppingBag size={14} className="text-blue-400" /></div>
+            <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center"><Package size={14} className="text-blue-400" /></div>
             <div><p className={cn('text-[11px] font-bold', t.text)}>Zásilkovna doručení</p><p className={cn('text-[9px]', t.muted)}>Geladrink Forte · balík</p></div>
           </div>
           <div className="flex items-center gap-1">
@@ -1078,7 +1129,13 @@ function D19({ t }: { t: AT }) {
         <div className={cn('rounded-2xl p-3 border-l-2 border-amber-500', t.surf)}>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center"><Star size={14} className="text-amber-400" /></div>
-            <div><p className={cn('text-[11px] font-bold', t.text)}>+130 Stardust earned</p><p className={cn('text-[9px]', t.muted)}>Streak: 7 dní 🔥 · Double XP aktivní</p></div>
+            <div>
+              <p className={cn('text-[11px] font-bold', t.text)}>+130 Stardust earned</p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <Flame size={9} className="text-orange-400" />
+                <p className={cn('text-[9px]', t.muted)}>Streak: 7 dní · Double XP aktivní</p>
+              </div>
+            </div>
           </div>
         </div>
         {/* Balance */}
@@ -1097,6 +1154,11 @@ function D19({ t }: { t: AT }) {
 // 20 Tabbed Universe
 function D20({ t }: { t: AT }) {
   const [tab, setTab] = useState<'platit'|'vydelat'|'objevit'>('platit')
+  const tabs = [
+    { id: 'platit' as const,  Icon: CreditCard, label: 'Platit' },
+    { id: 'vydelat' as const, Icon: Star,        label: 'Vydělat' },
+    { id: 'objevit' as const, Icon: Globe,       label: 'Objevit' },
+  ]
   return (
     <div className={cn('flex flex-col h-full', t.bg)}>
       <SBar t={t} />
@@ -1104,11 +1166,12 @@ function D20({ t }: { t: AT }) {
         <p className={cn('text-base font-bold', t.text)}>Mo.one</p>
         <div className="flex gap-2"><Bell size={15} className={t.muted} /><div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold">P</div></div>
       </div>
-      {/* Tabs */}
+      {/* Tabs with icons */}
       <div className={cn('flex px-4 py-2 gap-1 shrink-0 border-b', t.bord)}>
-        {([['platit','💳 Platit'],['vydelat','⭐ Vydělat'],['objevit','🌍 Objevit']] as const).map(([id,label])=>(
-          <button key={id} onClick={()=>setTab(id)}
-            className={cn('flex-1 py-1.5 rounded-xl text-[10px] font-bold transition-colors', tab===id?'bg-blue-600 text-white':cn(t.surf,t.muted))}>
+        {tabs.map(({ id, Icon, label }) => (
+          <button key={id} onClick={() => setTab(id)}
+            className={cn('flex-1 py-1.5 rounded-xl flex items-center justify-center gap-1 text-[10px] font-bold transition-colors', tab===id?'bg-blue-600 text-white':cn(t.surf,t.muted))}>
+            <Icon size={10} />
             {label}
           </button>
         ))}
@@ -1121,15 +1184,26 @@ function D20({ t }: { t: AT }) {
               <p className="text-blue-200 text-[9px]">Zůstatek</p>
               <p className="text-white text-3xl font-bold">12 450<span className="text-xl">,–</span></p>
               <div className="flex gap-2 mt-3">
-                {['💳 NFC','📱 QR','👤 Poslat'].map((a,i)=>(
-                  <div key={i} className={cn('flex-1 py-1.5 rounded-xl text-center text-[9px] font-bold', i===0?'bg-white text-blue-700':'bg-blue-500/50 text-white')}>{a}</div>
+                {[
+                  { Icon: CreditCard, label:'NFC', primary:true },
+                  { Icon: Play, label:'QR', primary:false },
+                  { Icon: Send, label:'Poslat', primary:false },
+                ].map((a,i)=>(
+                  <div key={i} className={cn('flex-1 py-1.5 rounded-xl flex flex-col items-center gap-0.5', a.primary?'bg-white':'bg-blue-500/50')}>
+                    <a.Icon size={10} className={a.primary?'text-blue-700':'text-white'} />
+                    <span className={cn('text-[8px] font-bold', a.primary?'text-blue-700':'text-white')}>{a.label}</span>
+                  </div>
                 ))}
               </div>
             </div>
             <p className={cn('text-[9px] font-bold uppercase tracking-widest', t.muted)}>Nedávné</p>
-            {[{n:'Santhia',a:'-89 Kč',e:'☕'},{n:'Cashback',a:'+22 Kč',e:'⭐'},{n:'Zásilkovna',a:'-60 Kč',e:'📦'}].map(tx=>(
+            {[
+              {n:'Santhia', a:'-89 Kč', Icon: Coffee, bg:'bg-amber-600'},
+              {n:'Cashback', a:'+22 Kč', Icon: Star, bg:'bg-green-600'},
+              {n:'Zásilkovna', a:'-60 Kč', Icon: Package, bg:'bg-gray-600'},
+            ].map(tx=>(
               <div key={tx.n} className="flex items-center gap-2.5">
-                <span className="text-base">{tx.e}</span>
+                <TxIcon icon={tx.Icon} color={tx.bg} />
                 <p className={cn('flex-1 text-[11px]', t.text)}>{tx.n}</p>
                 <p className={cn('text-[11px] font-semibold', tx.a[0]==='-'?'text-red-400':'text-green-400')}>{tx.a}</p>
               </div>
@@ -1143,9 +1217,15 @@ function D20({ t }: { t: AT }) {
               <p className="text-white text-4xl font-black">2.4%</p>
               <p className="text-green-300 text-[9px] mt-0.5">Gold tier · 14 250 Stardust</p>
             </div>
-            {[{icon:'☕',n:'Santhia dnes',b:'2× Stardust'},{icon:'🛒',n:'Albert nákup',b:'+100 SD'},{icon:'🎸',n:'Festival ticket',b:'+500 SD'}].map(op=>(
+            {[
+              {Icon: Coffee, bg:'bg-amber-600', n:'Santhia dnes', b:'2× Stardust'},
+              {Icon: Store,  bg:'bg-blue-600',  n:'Albert nákup', b:'+100 SD'},
+              {Icon: Music2, bg:'bg-violet-600',n:'Festival ticket',b:'+500 SD'},
+            ].map(op=>(
               <div key={op.n} className={cn('flex items-center gap-2.5 p-2.5 rounded-xl', t.surf)}>
-                <span className="text-xl">{op.icon}</span>
+                <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', op.bg)}>
+                  <op.Icon size={14} className="text-white" />
+                </div>
                 <div className="flex-1"><p className={cn('text-[11px] font-semibold', t.text)}>{op.n}</p><p className="text-green-400 text-[9px]">{op.b}</p></div>
                 <div className="bg-blue-600 px-2 py-0.5 rounded-full"><p className="text-white text-[9px] font-bold">Platit</p></div>
               </div>
@@ -1158,9 +1238,15 @@ function D20({ t }: { t: AT }) {
               <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=280&h=100&fit=crop&q=70" className="w-full h-20 object-cover" />
               <div className="p-2.5"><p className={cn('text-[11px] font-bold', t.text)}>Voucher na večeři</p><div className="flex items-center justify-between mt-1"><p className={cn('text-[9px]', t.muted)}>Moravská kuchyně</p><div className="bg-blue-600 px-2 py-0.5 rounded-full"><p className="text-white text-[9px] font-bold">1 234,–</p></div></div></div>
             </div>
-            {[{icon:'🚕',n:'Taxi · Domů',sub:'Odhadovaná cena: 89 Kč'},{icon:'🛵',n:'Jídlo · Rozvoz',sub:'Doručení do 30 min'},{icon:'🚲',n:'Mikro mobilita',sub:'E-kolo 200m od tebe'}].map(s=>(
+            {[
+              {Icon: Car,  bg:'bg-orange-600', n:'Taxi · Domů', sub:'Odhadovaná cena: 89 Kč'},
+              {Icon: Utensils, bg:'bg-rose-600', n:'Jídlo · Rozvoz', sub:'Doručení do 30 min'},
+              {Icon: Bike, bg:'bg-teal-600', n:'Mikro mobilita', sub:'E-kolo 200m od tebe'},
+            ].map(s=>(
               <div key={s.n} className={cn('flex items-center gap-2.5 p-2.5 rounded-xl', t.surf)}>
-                <span className="text-xl">{s.icon}</span>
+                <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', s.bg)}>
+                  <s.Icon size={14} className="text-white" />
+                </div>
                 <div className="flex-1"><p className={cn('text-[11px] font-semibold', t.text)}>{s.n}</p><p className={cn('text-[9px]', t.muted)}>{s.sub}</p></div>
                 <ChevronRight size={12} className={t.muted} />
               </div>
@@ -1184,64 +1270,64 @@ interface DashConcept {
 
 const CONCEPTS: DashConcept[] = [
   { id:'balance', num:'01', title:'Balance Focus', tag:'Wallet', tagColor:'bg-blue-600',
-    desc:'iOS Wallet-style. Velký zůstatek dominuje. Rychlé akce + transakce.', insight:'Nejpřirozenější pro uživatele z bankovních aplikací.',
+    desc:'iOS Wallet-style. Velký zůstatek dominuje. Rychlé akce a transakce s ikonami.', insight:'Nejpřirozenější pro uživatele z bankovních aplikací.',
     render: (t) => <D01 t={t} /> },
   { id:'stories', num:'02', title:'Stories Discovery', tag:'Social', tagColor:'bg-violet-600',
-    desc:'Stories nahoře jako Instagram. Merchant deal cards scrollují níže.', insight:'Zvyšuje engagement s merchant obsahem přes story formát.',
+    desc:'Stories nahoře jako Instagram — čisté kruhy s foto, bez textových prstenců. Merchant deal cards scrollují níže.', insight:'Zvyšuje engagement s merchant obsahem přes story formát.',
     render: (t) => <D02 t={t} /> },
   { id:'stream', num:'03', title:'Activity Stream', tag:'Feed', tagColor:'bg-indigo-600',
-    desc:'Chronologický feed: platby + zprávy + odměny v jednom proudu.', insight:'Ukazuje kontextové spojení mezi akcemi v reálném čase.',
+    desc:'Chronologický feed: platby, zprávy a odměny v jednom proudu. Každá položka má barevnou ikonu.', insight:'Ukazuje kontextové spojení mezi akcemi v reálném čase.',
     render: (t) => <D03 t={t} /> },
   { id:'stardust', num:'04', title:'Stardust Central', tag:'Gamify', tagColor:'bg-amber-500',
-    desc:'Celá plocha je o gamifikaci: XP ring, streak, tier, odměny.', insight:'Maximalizuje engagement přes odměnový loop.',
+    desc:'Celá plocha je o gamifikaci: XP ring, streak s ikonou, tier, odměny s Lucide ikonami.', insight:'Maximalizuje engagement přes odměnový loop.',
     render: (t) => <D04 t={t} /> },
   { id:'map', num:'05', title:'Nearby Map', tag:'Location', tagColor:'bg-teal-600',
-    desc:'Mapa jako primární obsah. Merchant piny, "Platit tady" CTA.', insight:'Pro uživatele v pohybu. Konverze v místě fyzické přítomnosti.',
+    desc:'Mapa jako primární obsah. Merchant piny, Platit tady CTA.', insight:'Pro uživatele v pohybu. Konverze v místě fyzické přítomnosti.',
     render: (t) => <D05 t={t} /> },
   { id:'chat', num:'06', title:'Chat-First', tag:'Messaging', tagColor:'bg-purple-600',
     desc:'Chat list je primární UI. Balance jako malý badge v headeru.', insight:'Pro uživatele, kteří platí hlavně přes P2P přátelé.',
     render: (t) => <D06 t={t} /> },
   { id:'ai', num:'07', title:'AI Concierge', tag:'AI', tagColor:'bg-cyan-600',
-    desc:'AI morning brief: kontext, smart návrhy, proaktivní akce.', insight:'Personalizace bez konfigurace — AI čte chování.',
+    desc:'AI morning brief: kontext, smart návrhy, proaktivní akce. Bez emoji v textu.', insight:'Personalizace bez konfigurace — AI čte chování.',
     render: (t) => <D07 t={t} /> },
   { id:'miniapps', num:'08', title:'Mini-App Grid', tag:'Platform', tagColor:'bg-orange-600',
-    desc:'WeChat-style launcher: 4×3 grid mini apps. Platforma nad vším.', insight:'Škáluje na integrované partnery přes Mini-App SDK.',
+    desc:'WeChat-style launcher: 4x3 grid mini apps. Platforma nad vším.', insight:'Škáluje na integrované partnery přes Mini-App SDK.',
     render: (t) => <D08 t={t} /> },
   { id:'cards', num:'09', title:'Card Stack Wallet', tag:'Cards', tagColor:'bg-blue-700',
-    desc:'Apple Wallet styl: karty stackované, CZKT + EMV v popředí.', insight:'Fyzická/digitální karta jako primární identita uživatele.',
+    desc:'Apple Wallet styl: karty stackované, CZKT a EMV v popředí.', insight:'Fyzická a digitální karta jako primární identita uživatele.',
     render: (t) => <D09 t={t} /> },
   { id:'reel', num:'10', title:'Merchant Reel', tag:'Commerce', tagColor:'bg-rose-600',
-    desc:'TikTok/Reels commerce: full-bleed merchant video, inline nákup.', insight:'Nejvyšší konverzní potenciál přes impulsní nákup.',
+    desc:'TikTok/Reels commerce: full-bleed merchant foto bez navigace. Obraz vyplňuje celých 640px.', insight:'Nejvyšší konverzní potenciál přes impulsní nákup.',
     render: (t) => <D10 t={t} /> },
   { id:'brief', num:'11', title:'Morning Brief', tag:'Summary', tagColor:'bg-zinc-600',
-    desc:'Novinový formát: shrnutí včera + co tě čeká dnes.', insight:'Denní ritual. Buduje návyk otevírat app každé ráno.',
+    desc:'Novinový formát: shrnutí včera a co tě čeká dnes. Každá položka má ikonu, nula emoji.', insight:'Denní ritual. Buduje návyk otevírat app každé ráno.',
     render: (t) => <D11 t={t} /> },
   { id:'donut', num:'12', title:'Spending Donut', tag:'Analytics', tagColor:'bg-blue-500',
     desc:'Donut chart: výdaje dle kategorie. Finanční přehled v centru.', insight:'Pro analytické uživatele, kteří sledují budget.',
     render: (t) => <D12 t={t} /> },
   { id:'context', num:'13', title:'Context Aware', tag:'Smart', tagColor:'bg-indigo-500',
-    desc:'Večerní mode: taxi suggestion, nearby restaurants, čas-based.', insight:'Kontextuální UI mění obsah dle hodiny, polohy, zvyků.',
+    desc:'Večerní mode: taxi suggestion s Car ikonou, nearby restaurants a store s Lucide ikonami, čas-based.', insight:'Kontextuální UI mění obsah dle hodiny, polohy, zvyků.',
     render: (t) => <D13 t={t} /> },
   { id:'widgets', num:'14', title:'Widget Matrix', tag:'Modular', tagColor:'bg-violet-500',
-    desc:'iOS 16+ widget tiles: balance, Stardust, chat, nearby v mřížce.', insight:'Každý widget klikatelný. Nejrychlejší přístup k akcím.',
+    desc:'iOS 16+ widget tiles: balance, Stardust, chat, nearby v mřížce. Ikony místo emoji.', insight:'Každý widget klikatelný. Nejrychlejší přístup k akcím.',
     render: (t) => <D14 t={t} /> },
   { id:'social', num:'15', title:'Social Payments', tag:'P2P', tagColor:'bg-pink-600',
-    desc:'Přátelé, splity, group fondy, P2P žádosti v centru.', insight:'Virální growth: platba jako social akce, ne jen transakce.',
+    desc:'Přátelé, splity, group fondy s Trophy ikonou, P2P žádosti v centru. Čisté bez emoji.', insight:'Virální growth: platba jako social akce, ne jen transakce.',
     render: (t) => <D15 t={t} /> },
   { id:'reward', num:'16', title:'Reward Engine', tag:'Cashback', tagColor:'bg-green-600',
-    desc:'Velký cashback rate, tier progress, daily earn opportunities.', insight:'Motivuje uživatele platit Mo.one co nejčastěji.',
+    desc:'Velký cashback rate, tier progress s Trophy, daily earn s kategoriálními ikonami.', insight:'Motivuje uživatele platit Mo.one co nejčastěji.',
     render: (t) => <D16 t={t} /> },
   { id:'command', num:'17', title:'Command Center', tag:'Power', tagColor:'bg-zinc-700',
-    desc:'Bloomberg-style dense UI. Vše najednou, pro power users.', insight:'B2B/hunter segment: maximální informace, nulové scroll.',
+    desc:'Bloomberg-style dense UI. Vše najednou, pro power users. Status grid s mini ikonami.', insight:'B2B/hunter segment: maximální informace, nulové scroll.',
     render: (t) => <D17 t={t} /> },
   { id:'minimal', num:'18', title:'Zero-Friction Pay', tag:'Minimal', tagColor:'bg-blue-800',
-    desc:'Jeden velký Zaplatit button. Zen design, nulapoložek.', insight:'Conversion-first. Odstraňuje veškerou kognitivní zátěž.',
+    desc:'Jeden velký Zaplatit button. Zen design, nula položek. Čisté ikony pro akce.', insight:'Conversion-first. Odstraňuje veškerou kognitivní zátěž.',
     render: (t) => <D18 t={t} /> },
   { id:'live', num:'19', title:'Live Activities', tag:'Dynamic', tagColor:'bg-orange-500',
-    desc:'Dynamic Island rozšířený: taxi tracking, platba live, delivery.', insight:'iOS 16+ Live Activities API — realtime bez odemknutí.',
+    desc:'Dynamic Island rozšířený: taxi tracking s Car ikonou, platba live, delivery s Package ikonou.', insight:'iOS 16+ Live Activities API — realtime bez odemknutí.',
     render: (t) => <D19 t={t} /> },
   { id:'tabs', num:'20', title:'Tabbed Universe', tag:'Navigation', tagColor:'bg-sky-600',
-    desc:'3 tahy: 💳 Platit / ⭐ Vydělat / 🌍 Objevit — kompletní ekosystém.', insight:'Rozděluje intent. Každý tab má jasný úkol.',
+    desc:'3 tahy: Platit (CreditCard) / Vydělat (Star) / Objevit (Globe) — kompletní ekosystém s ikonami v tabech.', insight:'Rozděluje intent. Každý tab má jasný úkol a ikonu.',
     render: (t) => <D20 t={t} /> },
 ]
 
@@ -1377,17 +1463,17 @@ export function ExperimentalSection() {
             <CardLabel>Mobile tech stack relevance</CardLabel>
             <div className="space-y-1.5 text-[11px] text-muted-foreground">
               {[
-                ['💳 NFC / AppClip', 'Layouts 01, 09, 18 — přímá NFC platba jako primární akce'],
-                ['📍 Location Services', 'Layout 05, 13 — kontextová mapa + smart suggestions'],
-                ['🔔 Live Activities', 'Layout 19 — Dynamic Island taxi/payment tracking'],
-                ['⭐ HealthKit / Gamify', 'Layout 04 — Stardust streak, pohybové senzory + body'],
-                ['🤖 AI / Mini Apps', 'Layout 07, 08 — AI concierge + WeChat SDK platforma'],
-                ['📱 CallKit / P2P', 'Layout 06, 15 — chat-first, P2P platby v konverzaci'],
-                ['🌐 Offline Payments', 'Layout 18 — minimální UI = nejnižší latence, offline ready'],
-              ].map(([k,v]) => (
-                <div key={k as string} className="flex gap-2">
-                  <span className="shrink-0">{(k as string).split(' ')[0]}</span>
-                  <span><strong className="text-foreground">{(k as string).replace(/^.+? /,'')}</strong> — {v as string}</span>
+                { Icon: CreditCard, label: 'NFC / AppClip', desc: 'Layouts 01, 09, 18 — přímá NFC platba jako primární akce' },
+                { Icon: MapPin,     label: 'Location Services', desc: 'Layout 05, 13 — kontextová mapa a smart suggestions' },
+                { Icon: Bell,       label: 'Live Activities', desc: 'Layout 19 — Dynamic Island taxi/payment tracking' },
+                { Icon: Star,       label: 'Gamify / Stardust', desc: 'Layout 04 — Stardust streak, pohybové senzory a body' },
+                { Icon: Sparkles,   label: 'AI / Mini Apps', desc: 'Layout 07, 08 — AI concierge a WeChat SDK platforma' },
+                { Icon: MessageCircle, label: 'CallKit / P2P', desc: 'Layout 06, 15 — chat-first, P2P platby v konverzaci' },
+                { Icon: Zap,        label: 'Offline Payments', desc: 'Layout 18 — minimální UI = nejnižší latence, offline ready' },
+              ].map(({ Icon, label, desc }) => (
+                <div key={label} className="flex gap-2 items-start">
+                  <Icon size={11} className="shrink-0 mt-0.5 text-foreground/40" />
+                  <span><strong className="text-foreground">{label}</strong> — {desc}</span>
                 </div>
               ))}
             </div>

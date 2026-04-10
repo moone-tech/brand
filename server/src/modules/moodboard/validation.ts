@@ -12,13 +12,13 @@ export const createBoardSchema = z.object({
 
 export const createItemSchema = z.object({
   boardId: z.string().uuid(),
-  type: z.enum(['image', 'url', 'color', 'note']),
+  type: z.enum(['image', 'url', 'color', 'note', 'article', 'document']),
   title: z.string().max(200).optional(),
-  note: z.string().max(2000).optional(),
+  note: z.string().max(10000).optional(),
   value: z.string().min(1, 'Hodnota je povinná'),
   tags: z.array(z.string()).max(10).optional(),
 });
 
 export const updateItemNoteSchema = z.object({
-  note: z.string().max(2000),
+  note: z.string().max(10000),
 });

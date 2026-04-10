@@ -18,7 +18,7 @@ export type TaskStatus = 'todo' | 'in_progress' | 'review' | 'done';
 export type TaskPriority = 'low' | 'medium' | 'high';
 
 /** Moodboard item type */
-export type MoodboardItemType = 'image' | 'url' | 'color' | 'note';
+export type MoodboardItemType = 'image' | 'url' | 'color' | 'note' | 'article' | 'document';
 
 /** Base entity with audit timestamps */
 export interface BaseEntity {
