@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'favicon.svg', 'apple-touch-icon-180x180.png', 'hero.png'],
+      includeAssets: ['favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon-180x180.png', 'hero.png'],
       manifest: {
         name: 'Mo.one Brand',
         short_name: 'Mo.one',
@@ -22,13 +22,12 @@ export default defineConfig({
         scope: '/',
         start_url: '/',
         icons: [
-          { src: '/pwa-64x64.png',          sizes: '64x64',     type: 'image/png' },
-          { src: '/pwa-192x192.png',         sizes: '192x192',   type: 'image/png' },
-          { src: '/pwa-512x512.png',         sizes: '512x512',   type: 'image/png', purpose: 'any' },
-          { src: '/maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
         ],
       },
       workbox: {
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,ico,svg,png,woff2}'],
         runtimeCaching: [
           {
