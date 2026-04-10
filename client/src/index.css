@@ -167,6 +167,20 @@
       padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
     }
   }
+
+  /* Safe-area top — keeps content below Dynamic Island / notch */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  /* Only apply on mobile (admin layout has no header on mobile) */
+  .pt-safe-mobile {
+    padding-top: 0;
+  }
+  @media (max-width: 767px) {
+    .pt-safe-mobile {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+  }
 }
 
 /* ── Scrollbar — styled, minimal ────────────────────────────────────────────── */

@@ -19,12 +19,12 @@ export function PublicLayout() {
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--background)' }}>
-      {/* Header */}
+      {/* Header — pt-safe pushes content below Dynamic Island / notch */}
       <header
-        className="sticky top-0 z-40 border-b"
+        className="sticky top-0 z-40 border-b pt-safe"
         style={{ background: 'var(--background)', borderColor: 'var(--border)' }}
       >
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link to="/" className="flex items-center" style={{ color: 'var(--text)' }}>
             <MooneLogo height={22} />
           </Link>

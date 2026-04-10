@@ -85,7 +85,7 @@ router.get('/me', authenticate, async (req, res, next) => {
 });
 
 // Admin: user management
-router.get('/users', authenticate, requireRole('admin'), async (_req, res, next) => {
+router.get('/users', authenticate, requireRole('admin', 'editor'), async (_req, res, next) => {
   try {
     const users = await svc.listUsers();
     res.json({ data: users });

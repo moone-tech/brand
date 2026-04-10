@@ -144,9 +144,9 @@ export function AdminLayout() {
         </div>
       </aside>
 
-      {/* Main content */}
+      {/* Main content — pt-safe-mobile pushes below Dynamic Island on iPhone (no header on mobile) */}
       <main
-        className="flex-1 overflow-y-auto pb-mobile-nav md:pb-0"
+        className="flex-1 overflow-y-auto pb-mobile-nav md:pb-0 pt-safe-mobile md:pt-0"
       >
         <Outlet />
       </main>

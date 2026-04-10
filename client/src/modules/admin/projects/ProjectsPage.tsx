@@ -200,7 +200,7 @@ export function ProjectsPage() {
   const { data: usersData } = useQuery({
     queryKey: ['all-users'],
     queryFn: () => api.get<{ data: UserProfile[] }>('/auth/users').then(r => r.data.data),
-    enabled: user?.role === 'admin' || user?.role === 'editor',
+    enabled: !!user && user.role !== 'viewer',
   });
 
   const projects = projectsData ?? [];

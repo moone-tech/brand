@@ -11,9 +11,20 @@ import type { UUID, TaskStatus, TaskPriority, UserRole } from '@shared/types';
 
 export async function listProjects() {
   const { rows } = await db.query(
-    `SELECT p.*, u.name AS created_by_name,
-            o.name AS owner_name,
-            COUNT(t.id) FILTER (WHERE t.deleted_at IS NULL) AS task_count
+    `SELECT
+       p.id,
+       p.name,
+       p.description,
+       p.color,
+       p.columns,
+       p.created_by_id  AS "createdById",
+       p.owner_id       AS "ownerId",
+       p.team_member_ids AS "teamMemberIds",
+       p.created_at     AS "createdAt",
+       p.updated_at     AS "updatedAt",
+       u.name           AS "createdByName",
+       o.name           AS "ownerName",
+       COUNT(t.id) FILTER (WHERE t.deleted_at IS NULL) AS "taskCount"
      FROM projects p
      JOIN users u ON u.id = p.created_by_id
      LEFT JOIN users o ON o.id = p.owner_id
@@ -78,9 +89,22 @@ export async function updateProject(id: UUID, data: {
 
 export async function listTasksByProject(projectId: UUID) {
   const { rows } = await db.query(
-    `SELECT t.*,
-            u.name AS created_by_name,
-            a.name AS assignee_name
+    `SELECT
+       t.id,
+       t.title,
+       t.description,
+       t.status,
+       t.priority,
+       t.position,
+       t.tags,
+       t.project_id   AS "projectId",
+       t.assignee_id  AS "assigneeId",
+       t.due_date     AS "dueDate",
+       t.created_by_id AS "createdById",
+       t.created_at   AS "createdAt",
+       t.updated_at   AS "updatedAt",
+       u.name         AS "createdByName",
+       a.name         AS "assigneeName"
      FROM tasks t
      JOIN users u ON u.id = t.created_by_id
      LEFT JOIN users a ON a.id = t.assignee_id
