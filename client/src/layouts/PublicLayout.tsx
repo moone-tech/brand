@@ -239,9 +239,9 @@ export function PublicLayout() {
       </header>
 
       {/* Content — overflow-x:hidden so hero's -mx-6 negative margin doesn't cause scrollbar */}
-      <main
-        className="max-w-6xl mx-auto px-6 pb-12 overflow-x-hidden"
-      >
+      {/* pt-0 on mobile: hero bleeds flush to header                    */}
+      {/* md:pt-8 on desktop: breathing room above the hero card         */}
+      <main className="max-w-6xl mx-auto px-6 pb-16 overflow-x-hidden md:pt-8">
         <Outlet />
       </main>
 

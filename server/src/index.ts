@@ -65,16 +65,15 @@ app.use(errorHandler);
 // Start
 // ---------------------------------------------------------------------------
 
-runMigrations()
-  .then(() => {
-    app.listen(config.server.port, () => {
-      logger.info(
-        { port: config.server.port, env: config.server.nodeEnv },
-        'Mo.one Brand server started',
-      );
-    });
-  })
-  .catch(err => {
-    logger.error({ err }, 'Migrations failed — aborting server start');
-    process.exit(1);
-  });
+// Run migrations then start — migrations are non-fatal so existing data
+// is always served even if a migration fails (e.g. on cold-start DB timeout).
+runMigrations().catch(err => {
+  logger.error({ err }, 'Migrations failed — server will start anyway, check DB');
+});
+
+app.listen(config.server.port, () => {
+  logger.info(
+    { port: config.server.port, env: config.server.nodeEnv },
+    'Mo.one Brand server started',
+  );
+});
