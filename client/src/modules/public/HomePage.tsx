@@ -31,13 +31,19 @@ export function HomePage() {
   ];
 
   return (
-    <div className="animate-fade-in space-y-16">
+    <div className="animate-fade-in space-y-14">
 
-      {/* ── Hero — full-bleed image with text overlay ─────────────────────── */}
-      <section className="pt-4">
+      {/* ── Hero — poster / magazine-cover layout ────────────────────────── */}
+      {/*
+          Mobile:  full-bleed edge-to-edge, 88svh tall, no radius
+          Desktop: contained in page grid, 2xl radius
+          Gradient: dark band top (eyebrow readable) + dark band bottom (headline readable)
+          Type: fluid clamp() so headline never overflows any viewport
+      */}
+      <section className="pt-4 -mx-6 md:mx-0">
         <div
-          className="relative w-full overflow-hidden rounded-2xl"
-          style={{ height: 'clamp(420px, 60vw, 720px)' }}
+          className="relative w-full overflow-hidden rounded-none md:rounded-2xl"
+          style={{ height: 'clamp(500px, 88svh, 820px)' }}
         >
           {/* Background image */}
           <img
@@ -48,50 +54,64 @@ export function HomePage() {
             decoding="async"
           />
 
-          {/* Dark gradient overlay — bottom-heavy so text at bottom is readable */}
+          {/* Dual gradient: darkens top AND bottom, image breathes in the middle */}
           <div
             className="absolute inset-0"
             style={{
-              background: 'linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.12) 40%, rgba(0,0,0,0.72) 100%)',
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.62) 0%, transparent 30%, transparent 55%, rgba(0,0,0,0.78) 100%)',
             }}
           />
 
-          {/* Text content — sits in lower half */}
-          <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12">
-            <p className="label-caps mb-4" style={{ color: 'rgba(255,255,255,0.65)' }}>
+          {/* Content: eyebrow at top, headline + CTA at bottom */}
+          <div className="absolute inset-0 flex flex-col justify-between p-7 md:p-12">
+
+            {/* Top — eyebrow label */}
+            <p className="label-caps" style={{ color: 'rgba(255,255,255,0.6)' }}>
               {t('home_eyebrow')}
             </p>
-            <div className="grid lg:grid-cols-2 gap-6 lg:gap-16 items-end">
+
+            {/* Bottom — headline + supporting line + CTAs */}
+            <div>
               <h1
-                className="text-4xl md:text-6xl font-bold tracking-tight leading-tight"
-                style={{ color: '#ffffff', letterSpacing: '-0.02em' }}
+                className="font-bold leading-none mb-5"
+                style={{
+                  color: '#ffffff',
+                  fontSize: 'clamp(1.5rem, 5.8vw, 4.5rem)',
+                  letterSpacing: '-0.03em',
+                  lineHeight: 1.05,
+                }}
               >
                 {t('home_hero_line1')}
                 <br />
                 {t('home_hero_line2')}
               </h1>
-              <div>
-                <p className="text-sm md:text-base leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.75)' }}>
+
+              <div className="flex flex-col sm:flex-row sm:items-end gap-5">
+                <p
+                  className="text-sm leading-relaxed max-w-xs"
+                  style={{ color: 'rgba(255,255,255,0.72)' }}
+                >
                   {t('home_hero_desc')}
                 </p>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-3 sm:ml-auto">
                   <a
                     href="mailto:jkoudelka@mo.one"
-                    className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90"
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 whitespace-nowrap"
                     style={{ background: 'var(--primary)', color: 'var(--primary-fg)' }}
                   >
                     {t('home_cta_primary')} <ArrowRight size={15} />
                   </a>
                   <Link
                     to="/guidelines"
-                    className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm border transition-colors"
-                    style={{ borderColor: 'rgba(255,255,255,0.35)', color: '#ffffff', background: 'rgba(255,255,255,0.08)' }}
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm border transition-colors whitespace-nowrap"
+                    style={{ borderColor: 'rgba(255,255,255,0.3)', color: '#ffffff', background: 'rgba(255,255,255,0.07)' }}
                   >
                     {t('home_cta_guidelines')}
                   </Link>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
