@@ -10,7 +10,7 @@ import { logger } from '../lib/logger';
 
 async function seed(): Promise<void> {
   const email = process.env.ADMIN_EMAIL ?? 'patrik@mo.one';
-  const name = process.env.ADMIN_NAME ?? 'Patrik Štípák';
+  const name = process.env.ADMIN_NAME ?? 'Patrik Štipák';
   const password = process.env.ADMIN_PASSWORD;
 
   if (!password) {
