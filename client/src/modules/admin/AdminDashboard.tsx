@@ -5,11 +5,11 @@
 import { Link } from 'react-router-dom';
 import { Palette, Image, Kanban, Users, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { useTranslation } from '../../lib/i18n';
+import { useTranslation, toVocative } from '../../lib/i18n';
 
 export function AdminDashboard() {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
 
   const CARDS = [
     {
@@ -39,7 +39,7 @@ export function AdminDashboard() {
     <div className="p-8 animate-fade-in space-y-10">
       <div>
         <h1 className="text-2xl font-bold tracking-tight mb-1" style={{ color: 'var(--text)' }}>
-          {t('dashboard_greeting')} {user?.name?.split(' ')[0] ?? t('dashboard_greeting_fallback')} 👋
+          {t('dashboard_greeting')} {toVocative(user?.name?.split(' ')[0] ?? t('dashboard_greeting_fallback'), lang)}
         </h1>
         <p className="text-sm" style={{ color: 'var(--muted)' }}>
           {t('dashboard_subtitle')}

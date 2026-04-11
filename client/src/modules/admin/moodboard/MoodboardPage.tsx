@@ -108,6 +108,7 @@ interface ArticleEditorProps {
 }
 
 function ArticleEditor({ boardId, onSave, onCancel }: ArticleEditorProps) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const editorRef = useRef<HTMLDivElement>(null);
   const [title, setTitle] = useState('');
@@ -182,7 +183,7 @@ function ArticleEditor({ boardId, onSave, onCancel }: ArticleEditorProps) {
       <input
         value={title}
         onChange={e => setTitle(e.target.value)}
-        placeholder="Název článku"
+        placeholder={t('moodboard_article_title_placeholder')}
         className="w-full px-4 py-3 rounded-xl border text-lg font-semibold focus:outline-none"
         style={{ background: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text)' }}
       />
@@ -194,7 +195,7 @@ function ArticleEditor({ boardId, onSave, onCancel }: ArticleEditorProps) {
         suppressContentEditableWarning
         className="min-h-64 px-4 py-3 rounded-xl border focus:outline-none text-sm leading-relaxed article-body"
         style={{ background: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text)' }}
-        data-placeholder="Začněte psát..."
+        data-placeholder={t('moodboard_article_body_placeholder')}
       />
 
       <div className="flex gap-2">
@@ -204,14 +205,14 @@ function ArticleEditor({ boardId, onSave, onCancel }: ArticleEditorProps) {
           className="px-5 py-2 rounded-xl text-sm font-medium disabled:opacity-40"
           style={{ background: 'var(--primary)', color: 'var(--primary-fg)' }}
         >
-          {saving ? 'Ukládám…' : 'Uložit článek'}
+          {saving ? t('moodboard_article_saving') : t('moodboard_article_save')}
         </button>
         <button
           onClick={onCancel}
           className="px-4 py-2 rounded-xl text-sm"
           style={{ color: 'var(--muted)' }}
         >
-          Zrušit
+          {t('moodboard_article_cancel')}
         </button>
       </div>
     </div>
@@ -228,6 +229,8 @@ function ArticleViewer({ item, onClose, onDelete, canEdit }: {
   onDelete: () => void;
   canEdit: boolean;
 }) {
+  const { t, lang } = useTranslation();
+  const dateLocale = lang === 'cs' ? 'cs-CZ' : 'en-GB';
   return (
     <div className="animate-fade-in">
       <div className="flex items-center gap-3 mb-6">
@@ -236,7 +239,7 @@ function ArticleViewer({ item, onClose, onDelete, canEdit }: {
           className="flex items-center gap-1.5 text-sm"
           style={{ color: 'var(--muted)' }}
         >
-          <ChevronLeft size={16} /> Zpět na články
+          <ChevronLeft size={16} /> {t('moodboard_article_back')}
         </button>
         {canEdit && (
           <button
@@ -244,12 +247,12 @@ function ArticleViewer({ item, onClose, onDelete, canEdit }: {
             className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
             style={{ background: 'var(--destructive)', color: '#fff' }}
           >
-            <Trash2 size={13} /> Smazat
+            <Trash2 size={13} /> {t('moodboard_article_delete')}
           </button>
         )}
       </div>
       <p className="text-xs uppercase tracking-widest mb-2" style={{ color: 'var(--muted)' }}>
-        {new Date(item.createdAt ?? '').toLocaleDateString('cs-CZ', { day: 'numeric', month: 'long', year: 'numeric' })}
+        {new Date(item.createdAt ?? '').toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
       </p>
       <h1 className="text-3xl font-bold mb-6" style={{ color: 'var(--text)' }}>{item.title}</h1>
       <div
@@ -266,6 +269,7 @@ function ArticleViewer({ item, onClose, onDelete, canEdit }: {
 // ---------------------------------------------------------------------------
 
 function ArticlesTab({ boardId, items, canEdit }: { boardId: string; items: MoodboardItem[]; canEdit: boolean }) {
+  const { t, lang } = useTranslation();
   const qc = useQueryClient();
   const [editorOpen, setEditorOpen] = useState(false);
   const [viewing, setViewing] = useState<MoodboardItem | null>(null);
@@ -299,7 +303,7 @@ function ArticlesTab({ boardId, items, canEdit }: { boardId: string; items: Mood
           className="flex items-center gap-2 mb-6 px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors hover:border-[var(--primary)]"
           style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text)' }}
         >
-          <Plus size={15} /> Nový článek
+          <Plus size={15} /> {t('moodboard_article_new')}
         </button>
       )}
 
@@ -319,7 +323,7 @@ function ArticlesTab({ boardId, items, canEdit }: { boardId: string; items: Mood
       {articles.length === 0 && !editorOpen ? (
         <div className="text-center py-20">
           <FileText size={32} className="mx-auto mb-3 opacity-20" style={{ color: 'var(--muted)' }} />
-          <p style={{ color: 'var(--muted)' }}>Zatím žádné články. Napište první.</p>
+          <p style={{ color: 'var(--muted)' }}>{t('moodboard_article_empty')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -342,7 +346,7 @@ function ArticlesTab({ boardId, items, canEdit }: { boardId: string; items: Mood
                   <p className="text-xs leading-relaxed line-clamp-2" style={{ color: 'var(--muted)' }}>{art.note}</p>
                 )}
                 <p className="text-xs mt-2" style={{ color: 'var(--muted)', opacity: 0.6 }}>
-                  {new Date(art.createdAt ?? '').toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  {new Date(art.createdAt ?? '').toLocaleDateString(lang === 'cs' ? 'cs-CZ' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </p>
               </div>
               {canEdit && (
@@ -367,6 +371,7 @@ function ArticlesTab({ boardId, items, canEdit }: { boardId: string; items: Mood
 // ---------------------------------------------------------------------------
 
 function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: MoodboardItem[]; canEdit: boolean }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -383,7 +388,7 @@ function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: Moo
   const uploadFile = useCallback(async (file: File) => {
     const allowed = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'];
     if (!allowed.includes(file.type)) {
-      alert('Povoleny jsou pouze soubory PDF a DOCX.');
+      alert(t('moodboard_doc_invalid_type'));
       return;
     }
     setUploading(true);
@@ -434,12 +439,12 @@ function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: Moo
       {pdfPreview && (
         <div className="fixed inset-0 z-50 flex flex-col bg-black/80 backdrop-blur-sm animate-fade-in">
           <div className="flex items-center justify-between px-4 py-3">
-            <span className="text-white text-sm font-medium">PDF náhled</span>
+            <span className="text-white text-sm font-medium">{t('moodboard_doc_preview')}</span>
             <button onClick={() => setPdfPreview(null)} className="text-white/60 hover:text-white">
               <X size={20} />
             </button>
           </div>
-          <iframe src={pdfPreview} className="flex-1 w-full border-0" title="PDF preview" />
+          <iframe src={pdfPreview} className="flex-1 w-full border-0" title={t('moodboard_doc_preview')} />
         </div>
       )}
 
@@ -466,7 +471,7 @@ function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: Moo
           >
             <Upload size={22} style={{ color: 'var(--muted)' }} />
             <p className="text-sm font-medium" style={{ color: 'var(--muted)' }}>
-              {uploading ? 'Nahrávám…' : 'Přetáhněte nebo klikněte pro nahrání PDF / DOCX'}
+              {uploading ? t('moodboard_doc_dropzone_uploading') : t('moodboard_doc_dropzone')}
             </p>
           </div>
         </>
@@ -475,7 +480,7 @@ function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: Moo
       {docs.length === 0 ? (
         <div className="text-center py-16">
           <FileText size={32} className="mx-auto mb-3 opacity-20" style={{ color: 'var(--muted)' }} />
-          <p style={{ color: 'var(--muted)' }}>Žádné dokumenty. Nahrajte PDF nebo DOCX.</p>
+          <p style={{ color: 'var(--muted)' }}>{t('moodboard_doc_empty')}</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -509,7 +514,7 @@ function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: Moo
                   {isPdf && (
                     <button
                       onClick={() => setPdfPreview(doc.value)}
-                      title="Zobrazit PDF"
+                      title={t('moodboard_doc_show_pdf')}
                       className="p-2 rounded-lg hover:bg-[var(--elevated)] transition-colors"
                       style={{ color: 'var(--muted)' }}
                     >
@@ -518,7 +523,7 @@ function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: Moo
                   )}
                   <button
                     onClick={() => downloadDoc(doc)}
-                    title="Stáhnout"
+                    title={t('moodboard_doc_download')}
                     className="p-2 rounded-lg hover:bg-[var(--elevated)] transition-colors"
                     style={{ color: 'var(--muted)' }}
                   >
@@ -527,7 +532,7 @@ function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: Moo
                   {canEdit && (
                     <button
                       onClick={() => deleteItem.mutate(doc.id)}
-                      title="Smazat"
+                      title={t('moodboard_doc_delete')}
                       className="p-2 rounded-lg hover:bg-[var(--elevated)] transition-colors opacity-0 group-hover:opacity-100"
                       style={{ color: 'var(--destructive)' }}
                     >
@@ -643,9 +648,9 @@ export function MoodboardPage() {
   }
 
   const PAGE_TABS: { id: PageTab; label: string }[] = [
-    { id: 'moodboard', label: 'Moodboard' },
-    { id: 'articles', label: 'Články' },
-    { id: 'documents', label: 'Dokumenty' },
+    { id: 'moodboard', label: t('moodboard_tab_moodboard') },
+    { id: 'articles', label: t('moodboard_tab_articles') },
+    { id: 'documents', label: t('moodboard_tab_documents') },
   ];
 
   return (
@@ -854,7 +859,7 @@ export function MoodboardPage() {
                             {item.value}
                           </a>
                         ) : item.type === 'image' && item.value.startsWith('data:') ? (
-                          <em>nahraný obrázek</em>
+                          <em>{t('moodboard_uploaded_image')}</em>
                         ) : (
                           item.value
                         )}
@@ -890,7 +895,7 @@ export function MoodboardPage() {
 
       {!activeBoardId && pageTab !== 'moodboard' && (
         <div className="text-center py-20">
-          <p style={{ color: 'var(--muted)' }}>Nejprve vytvořte moodboard nástěnku.</p>
+          <p style={{ color: 'var(--muted)' }}>{t('moodboard_no_board')}</p>
         </div>
       )}
     </div>

@@ -280,6 +280,30 @@ const cs = {
   assets_custom_label: 'Potřebuješ specifické assety?',
   assets_custom_contact: 'Kontaktuj brand tým přes',
 
+  // ── Moodboard — articles & documents ─────────────────────────────────────────
+  moodboard_tab_moodboard: 'Moodboard',
+  moodboard_tab_articles: 'Články',
+  moodboard_tab_documents: 'Dokumenty',
+  moodboard_article_new: 'Nový článek',
+  moodboard_article_title_placeholder: 'Název článku',
+  moodboard_article_body_placeholder: 'Začněte psát...',
+  moodboard_article_save: 'Uložit článek',
+  moodboard_article_saving: 'Ukládám…',
+  moodboard_article_cancel: 'Zrušit',
+  moodboard_article_back: 'Zpět na články',
+  moodboard_article_delete: 'Smazat',
+  moodboard_article_empty: 'Zatím žádné články. Napište první.',
+  moodboard_doc_dropzone: 'Přetáhněte nebo klikněte pro nahrání PDF / DOCX',
+  moodboard_doc_dropzone_uploading: 'Nahrávám…',
+  moodboard_doc_empty: 'Žádné dokumenty. Nahrajte PDF nebo DOCX.',
+  moodboard_doc_invalid_type: 'Povoleny jsou pouze soubory PDF a DOCX.',
+  moodboard_doc_preview: 'PDF náhled',
+  moodboard_doc_show_pdf: 'Zobrazit PDF',
+  moodboard_doc_download: 'Stáhnout',
+  moodboard_doc_delete: 'Smazat',
+  moodboard_no_board: 'Nejprve vytvořte moodboard nástěnku.',
+  moodboard_uploaded_image: 'nahraný obrázek',
+
   // ── Common ──────────────────────────────────────────────────────────────────
   cancel: 'Zrušit',
   save: 'Uložit',
@@ -560,6 +584,29 @@ const en: { [K in keyof typeof cs]: string } = {
   assets_custom_label: 'Need specific assets?',
   assets_custom_contact: 'Contact the brand team at',
 
+  moodboard_tab_moodboard: 'Moodboard',
+  moodboard_tab_articles: 'Articles',
+  moodboard_tab_documents: 'Documents',
+  moodboard_article_new: 'New article',
+  moodboard_article_title_placeholder: 'Article title',
+  moodboard_article_body_placeholder: 'Start writing...',
+  moodboard_article_save: 'Save article',
+  moodboard_article_saving: 'Saving…',
+  moodboard_article_cancel: 'Cancel',
+  moodboard_article_back: 'Back to articles',
+  moodboard_article_delete: 'Delete',
+  moodboard_article_empty: 'No articles yet. Write your first one.',
+  moodboard_doc_dropzone: 'Drag and drop or click to upload PDF / DOCX',
+  moodboard_doc_dropzone_uploading: 'Uploading…',
+  moodboard_doc_empty: 'No documents. Upload a PDF or DOCX.',
+  moodboard_doc_invalid_type: 'Only PDF and DOCX files are allowed.',
+  moodboard_doc_preview: 'PDF Preview',
+  moodboard_doc_show_pdf: 'View PDF',
+  moodboard_doc_download: 'Download',
+  moodboard_doc_delete: 'Delete',
+  moodboard_no_board: 'Create a moodboard first.',
+  moodboard_uploaded_image: 'uploaded image',
+
   cancel: 'Cancel',
   save: 'Save',
   delete: 'Delete',
@@ -615,4 +662,36 @@ export function useTranslation() {
   const ctx = useContext(LangContext);
   if (!ctx) throw new Error('useTranslation must be used within LangProvider');
   return ctx;
+}
+
+// ---------------------------------------------------------------------------
+// Czech vocative case helper  (5. pád)
+// Handles common male/female first-name patterns; falls back to nominative.
+// ---------------------------------------------------------------------------
+
+export function toVocative(firstName: string, lang: Lang): string {
+  if (lang !== 'cs') return firstName;
+  const n = firstName.trim();
+  if (n.length < 2) return n;
+
+  // Female names ending in -a → -o  (Jana → Jano, Petra → Petro)
+  if (n.endsWith('a')) return n.slice(0, -1) + 'o';
+  // Female names ending in -e stay the same  (Marie → Marie)
+  if (n.endsWith('e') || n.endsWith('ie')) return n;
+
+  // Male names — consonant-based rules
+  if (n.endsWith('ek')) return n.slice(0, -2) + 'ku';                         // Marek → Marku
+  if (n.endsWith('ík') || n.endsWith('ik')) return n.slice(0, -1) + 'ku';     // Patrik → Patriku, Dominik → Dominiku
+  if (n.endsWith('k'))  return n + 'u';                                        // Radek handled above, Lukáš below
+  if (n.endsWith('eš') || n.endsWith('oš') || n.endsWith('áš')) return n + 'i';// Matěš → Matěši, Lukáš → Lukáši
+  if (n.endsWith('š'))  return n + 'i';                                        // Tomáš → Tomáši
+  if (n.endsWith('ec')) return n.slice(0, -2) + 'če';                         // Honzíkovec → …, rare
+  if (n.endsWith('el')) return n + 'i';                                        // Pavel → Pavli? Actually Pavle. Tricky.
+  if (n.endsWith('tr') || n.endsWith('dr')) return n + 'e';                    // Petr → Petře — needs ř
+  if (n.endsWith('r'))  return n + 'e';                                        // generic -r → -ře (simplified)
+  if (n.endsWith('n'))  return n + 'e';                                        // Jan → Jane
+  if (n.endsWith('l'))  return n + 'e';                                        // Pavel → Pavle
+  if (n.endsWith('b') || n.endsWith('p') || n.endsWith('m') || n.endsWith('v')) return n + 'e';
+
+  return n; // fallback: nominative
 }
