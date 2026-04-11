@@ -58,8 +58,17 @@ export async function deleteBoard(id: UUID) {
 // ---------------------------------------------------------------------------
 
 export async function listItems(boardId: UUID) {
+  // Return lightweight list — strip value for document/article types (can be
+  // megabytes of base64). Client fetches full value via getItemValue() on demand.
   const { rows } = await db.query(
-    `SELECT i.*, u.name AS added_by_name
+    `SELECT
+       i.id, i.board_id, i.type, i.title, i.note, i.tags, i.position,
+       i.added_by_id, i.created_at, i.updated_at,
+       CASE
+         WHEN i.type IN ('document', 'article') THEN ''
+         ELSE i.value
+       END AS value,
+       u.name AS added_by_name
      FROM moodboard_items i
      JOIN users u ON u.id = i.added_by_id
      WHERE i.board_id = $1 AND i.deleted_at IS NULL
@@ -67,6 +76,14 @@ export async function listItems(boardId: UUID) {
     [boardId],
   );
   return rows;
+}
+
+export async function getItemValue(id: UUID) {
+  const { rows } = await db.query(
+    'SELECT id, value FROM moodboard_items WHERE id = $1 AND deleted_at IS NULL',
+    [id],
+  );
+  return rows[0] ?? null;
 }
 
 export async function createItem(data: {

@@ -231,6 +231,16 @@ function ArticleViewer({ item, onClose, onDelete, canEdit }: {
 }) {
   const { t, lang } = useTranslation();
   const dateLocale = lang === 'cs' ? 'cs-CZ' : 'en-GB';
+
+  // Fetch full HTML value on demand (stripped from list response for perf)
+  const { data: fullData } = useQuery({
+    queryKey: ['moodboard-item-value', item.id],
+    queryFn: () => api.get<{ data: { id: string; value: string } }>(`/moodboard/items/${item.id}/value`).then(r => r.data.data),
+    staleTime: Infinity,
+  });
+
+  const html = fullData?.value || item.value;
+
   return (
     <div className="animate-fade-in">
       <div className="flex items-center gap-3 mb-6">
@@ -255,11 +265,15 @@ function ArticleViewer({ item, onClose, onDelete, canEdit }: {
         {new Date(item.createdAt ?? '').toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
       </p>
       <h1 className="text-3xl font-bold mb-6" style={{ color: 'var(--text)' }}>{item.title}</h1>
-      <div
-        className="article-body text-sm leading-relaxed max-w-2xl"
-        style={{ color: 'var(--text)' }}
-        dangerouslySetInnerHTML={{ __html: item.value }}
-      />
+      {html ? (
+        <div
+          className="article-body text-sm leading-relaxed max-w-2xl"
+          style={{ color: 'var(--text)' }}
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      ) : (
+        <p className="text-sm animate-pulse" style={{ color: 'var(--muted)' }}>Načítám…</p>
+      )}
     </div>
   );
 }
@@ -426,12 +440,22 @@ function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: Moo
     e.target.value = '';
   }, [uploadFile]);
 
-  const downloadDoc = (item: MoodboardItem) => {
-    const a = document.createElement('a');
-    a.href = item.value;
-    a.download = item.title ?? 'document';
-    a.click();
-  };
+  const fetchAndAction = useCallback(async (item: MoodboardItem, action: 'download' | 'preview') => {
+    try {
+      const { data } = await api.get<{ data: { id: string; value: string } }>(`/moodboard/items/${item.id}/value`);
+      const value = data.data.value;
+      if (action === 'download') {
+        const a = document.createElement('a');
+        a.href = value;
+        a.download = item.title ?? 'document';
+        a.click();
+      } else {
+        setPdfPreview(value);
+      }
+    } catch {
+      // noop
+    }
+  }, []);
 
   return (
     <div>
@@ -485,7 +509,7 @@ function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: Moo
       ) : (
         <div className="space-y-2">
           {docs.map(doc => {
-            const isPdf = doc.value.startsWith('data:application/pdf');
+            const isPdf = doc.note?.startsWith('PDF') ?? false;
             const ext = doc.note?.split(' ·')[0] ?? 'DOC';
             return (
               <div
@@ -513,7 +537,7 @@ function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: Moo
                 <div className="flex items-center gap-1">
                   {isPdf && (
                     <button
-                      onClick={() => setPdfPreview(doc.value)}
+                      onClick={() => fetchAndAction(doc, 'preview')}
                       title={t('moodboard_doc_show_pdf')}
                       className="p-2 rounded-lg hover:bg-[var(--elevated)] transition-colors"
                       style={{ color: 'var(--muted)' }}
@@ -522,7 +546,7 @@ function DocumentsTab({ boardId, items, canEdit }: { boardId: string; items: Moo
                     </button>
                   )}
                   <button
-                    onClick={() => downloadDoc(doc)}
+                    onClick={() => fetchAndAction(doc, 'download')}
                     title={t('moodboard_doc_download')}
                     className="p-2 rounded-lg hover:bg-[var(--elevated)] transition-colors"
                     style={{ color: 'var(--muted)' }}

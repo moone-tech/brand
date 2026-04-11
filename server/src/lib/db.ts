@@ -18,9 +18,16 @@ export const db = new Pool({
   user: config.db.user,
   password: config.db.password,
   ssl: sslConfig,
-  max: 10,
-  idleTimeoutMillis: 30_000,
-  connectionTimeoutMillis: 5_000,
+  max: 20,
+  min: 2,                          // keep 2 warm connections ready
+  idleTimeoutMillis: 60_000,       // 60s before idle connection is closed
+  connectionTimeoutMillis: 10_000, // 10s to establish (Railway cold starts)
+  allowExitOnIdle: false,          // keep pool alive
+});
+
+// Log pool errors to prevent silent connection drops
+db.on('error', (err) => {
+  console.error('Unexpected PG pool error:', err.message);
 });
 
 // ---------------------------------------------------------------------------

@@ -64,6 +64,15 @@ router.post('/items', requireRole('admin', 'editor'), async (req, res, next) => 
   } catch (err) { next(err); }
 });
 
+// Fetch full item value (for documents/articles stripped from list response)
+router.get('/items/:id/value', async (req, res, next) => {
+  try {
+    const item = await q.getItemValue(req.params.id);
+    if (!item) { res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Item not found' } }); return; }
+    res.json({ data: item });
+  } catch (err) { next(err); }
+});
+
 router.patch('/items/:id/note', requireRole('admin', 'editor'), async (req, res, next) => {
   try {
     const { note } = updateItemNoteSchema.parse(req.body);
