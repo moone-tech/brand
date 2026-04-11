@@ -15,6 +15,7 @@ import {
 import { useCiStore } from './useCiStore'
 import { useTranslation } from '@/lib/i18n'
 import { ExperimentalSection } from './ExperimentalSection'
+import { UxFlowSection } from './UxFlowSection'
 
 type Section =
   | 'mission' | 'values' | 'positioning' | 'voice' | 'microcopy'
@@ -22,6 +23,7 @@ type Section =
   | 'spacing' | 'motion' | 'components' | 'imagery'
   | 'superapp' | 'entities' | 'applications'
   | 'experimental'
+  | 'uxflows'
 
 function copyHex(hex: string) {
   navigator.clipboard.writeText(hex).catch(() => undefined)
@@ -2252,7 +2254,8 @@ export function CiEditorPage() {
     ]},
     { label: t('ci_section_app'), items: [
       { id: 'superapp',      name: t('ci_nav_superapp') },
-      { id: 'experimental',  name: '⚗️ Dashboard Lab' },
+      { id: 'experimental',  name: 'Dashboard Lab' },
+      { id: 'uxflows',       name: 'UX Flow Simulator' },
     ]},
     { label: t('ci_section_holding'), items: [
       { id: 'entities',     name: t('ci_nav_entities') },
@@ -2278,6 +2281,7 @@ export function CiEditorPage() {
     imagery:      <ImagerySection />,
     superapp:      <SuperAppSection />,
     experimental:  <ExperimentalSection />,
+    uxflows:       <UxFlowSection />,
     entities:      <EntitiesSection />,
     applications: <ApplicationsSection />,
   }
